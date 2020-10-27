@@ -1,6 +1,6 @@
-# LEMRinterface
+# Simple EMR System
 
-Simple EMR System. This code can be used for Electronic Medical Record Research.
+This code can be used for Electronic Medical Record Research.
 
 This system was built to facilitate the development a Learning EMR (LEMR) system. 
 
