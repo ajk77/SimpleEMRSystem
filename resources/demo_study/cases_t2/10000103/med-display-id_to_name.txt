@@ -1,0 +1,35 @@
+0	Sodium Chloride 0.9%	sodium chloride 0.9% (for bolus)
+1	Base solution	Propofol 500 mg/50 mL Premix 500 mg [5 mcg/kg/min] + PREMIX DO NOT ADD TO BAG (wt required) 50 mL
+2	propofol	propofol
+3	phenylephrine	phenylephrine
+4	rocuronium	rocuronium
+5	heparin	heparin
+6	niCARdipine	niCARdipine
+7	fentanyl	fentanyl_
+8	clevidipine	clevidipine
+9	Sodium Chloride 0.9%	Sodium Chloride 0.9%
+10	Base solution	Fentanyl 2500 mcg/NS 100 mL Premix 2^500 mcg [30 mcg/hr] + PREMIX DO NOT ADD TO BAG (wt required) 1
+11	Sodium Chloride 0.9%	Sodium Chloride 0.9% 1000 mL
+12	heparin	heparin
+13	Sodium Chloride 0.9%	NS (for bolus)
+14	Lactated Ringers	Lactated Ringers (for bolus)
+15	magnesium sulfate	magnesium sulfate
+16	chlorhexidine topical	Peridex 0.12% topical liquid
+17	Base solution	Propofol 1000 mg/100 mL Premix 1000 mg [40 mcg/kg/min] + PREMIX DO NOT ADD TO BAG (wt required) 100
+18	famotidine	famotidine
+19	aspirin	aspirin
+20	labetalol	labetalol
+21	D5NS	D5NS 1000 mL
+22	acetaminophen	acetaminophen
+23	potassium phosphate	potassium phosphate
+24	hydrALAZINE	hydrALAZINE
+25	metoprolol	metoprolol
+26	insulin lispro (HumaLOG)	Insulin Sliding Scale
+27	acetaminophen	acetaminophen
+28	vancomycin	vancomycin
+29	potassium chloride	potassium chloride
+30	ampicillin-sulbactam	Unasyn
+31	metoprolol	metoprolol
+32	amLODIPine	Norvasc
+33	docusate	Colace
+34	Sodium Chloride 0.9%	NS 1^000 mL

@@ -1,0 +1,1 @@
+[{"date": "09/08", "text": "REPORT TEXT GOES HERE", "js_time": 1347076800000.0, "upk": 0, "type": "EKG"}, {"date": "09/07", "text": "REPORT TEXT GOES HERE", "js_time": 1346990400000.0, "upk": 1, "type": "EKG"}, {"date": "09/07", "text": "REPORT TEXT GOES HERE", "js_time": 1346990400000.0, "upk": 2, "type": "EKG"}]

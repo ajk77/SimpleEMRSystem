@@ -1,0 +1,113 @@
+0	Sodium Chloride 0.9%	Sodium Chloride 0.9% 1^000 mL
+1	diazepam	diazepam
+2	diphenhydrAMINE	Benadryl
+3	aspirin	aspirin
+4	ondansetron	Zofran
+5	heparin	HEParin 25^000 Units/D5W 250 mL 25^000 Unit(s) [10 unit(s)/kg/hr] + Premix Do Not Add To Bag (wt re
+6	ascorbic acid	Vitamin C
+7	mupirocin topical	Bactroban 2% nasal ointment w/applicator
+8	pantoprazole	Protonix
+9	midazolam	midazolam
+10	etomidate	etomidate
+11	fentanyl	fentanyl
+12	rocuronium	rocuronium
+13	cefazolin	cefazolin
+14	phenylephrine	phenylephrine
+15	Sodium Chloride 0.9%	Sodium Chloride 0.9%
+16	heparin	heparin
+17	aminocaproic acid	aminocaproic acid
+18	norepinephrine	norepinephrine
+19	magnesium sulfate	magnesium sulfate
+20	amiodarone	amiodarone
+21	insulin regular (HumuLIN R^ NovoLIN R)	insulin regular (HumuLIN R^ NovoLIN R)
+22	vasopressin	vasopressin
+23	calcium chloride	calcium chloride
+24	furosemide	furosemide
+25	tromethamine	tromethamine
+26	albumin human	albumin human
+27	protamine	protamine
+28	glycopyrrolate	glycopyrrolate
+29	neostigmine	neostigmine
+30	amiodarone	amiodarone 450 mg [0.5 mg/min] + D5W (wt required) 250 mL
+31	epinephrine	epinephrine 16 mg [0.1 mcg/kg/min] + NS (wt required) 250 mL
+32	insulin regular (HumuLIN R^ NovoLIN R)	insulin regular (HumuLIN R^ NovoLIN R) 250 Unit(s) [1 unit(s)/hr] + NS (wt required) 250 mL
+33	norepinephrine	norepinephrine 16 mg [0.15 mcg/kg/min] + NS (wt required) 250 mL
+34	vasopressin	vasopressin 100 Unit(s) [0.02 unit(s)/min] + NS (wt required) 100 mL
+35	dexmedetomidine	dexmedetomidine
+36	epinephrine	epinephrine
+37	D5NS	D5 NS 1000 mL
+38	albumin human	albumin human 5% 250 mL
+39	potassium chloride	potassium chloride 20 mEq/50 ml intravenous solution
+40	chlorhexidine topical	Peridex 0.12% topical liquid
+41	DISCONTINUE MEDICATION	Discontinue all previous insulins and oral hypoglycemics
+42	Sodium Chloride 0.9%	sodium chloride 0.9% (for bolus)
+43	cefazolin	cefazolin
+44	Sodium Chloride 0.9%	Protonix  IV
+45	sodium bicarbonate	sodium bicarbonate
+46	DOBUTamine	DOBUTamine / D5W Premix 1 gm [10 mcg/kg/min] + PREMIX DO NOT ADD TO BAG (wt required) 250 mL
+47	cefoxitin	cefoxitin
+48	potassium chloride	potassium chloride
+49	Base solution	Propofol 1000 mg/100 mL Premix 1^000 mg [25 mcg/kg/min] + PREMIX DO NOT ADD TO BAG (wt required) 10
+50	DOBUTamine	DOBUTamine
+51	propofol	propofol
+52	D5 LR	D5 LR 1000 mL
+53	Sodium Chloride 0.9%	NS (for bolus)
+54	DOPamine	DOPamine/D5W  Premix 800 mg [5 mcg/kg/min] + PREMIX DO NOT ADD TO BAG (wt required) 250 mL
+55	Sodium Chloride 0.9%	phytonadione IV
+56	amiodarone	amiodarone
+57	NS + KCL 20 mEq premix	NS + KCL 20 mEq premix* 1000 mL
+58	levothyroxine	levothyroxine 25 mcg + CONCENTRATION 40 MCG/ML 1 ea
+59	fentanyl	fentanyl
+60	DOPamine	DOPamine
+61	Sodium Chloride 0.9%	NS 1000 mL
+62	glucose	Dextrose 50% Injection 50 mL
+63	D5 1/2NS	D5 1/2NS 1000 mL
+64	bimatoprost ophthalmic	Lumigan 0.03% ophthalmic solution
+65	dorzolamide ophthalmic	Trusopt 2% ophthalmic solution
+66	metronidazole	Flagyl
+67	Sodium Chloride 0.9%	Zosyn
+68	HYDROmorphone	hydromorphone
+69	HYDROmorphone	Dilaudid
+70	D5 1/2NS	D5 1/2NS 1^000 mL
+71	balsam Peru/castor oil/trypsin topical	Xenaderm topical ointment-nonformulary
+72	ondansetron	ondansetron
+73	pantoprazole	pantoprazole
+74	Sodium Chloride 0.9%	potassium phosphate
+75	heparin	heparin
+76	Sodium Chloride 0.9%	Protonix
+77	potassium chloride	potassium chloride
+78	insulin regular (HumuLIN R^ NovoLIN R)	Insulin Sliding Scale
+79	metoclopramide	Reglan
+80	Electrolyte Solution (Plasma-Lyte)	Plasmalyte A (for bolus)
+81	potassium chloride	potassium chloride 10 mEq/50 ml intravenous solution
+82	Dextrose 5% in Water	D5W 1000 mL + sodium bicarbonate 150 mEq
+83	acetylcysteine	Mucomyst-10 (100 mg/mL) oral sol
+84	erythromycin	erythromycin
+85	Sodium Chloride 0.9%	sodium phosphate
+86	Dextrose 5% in Water	D5W 1^000 mL + sodium bicarbonate 75 mEq
+87	acetylcysteine	Mucomyst-10 (100 mg/mL) oral soln
+88	fentanyl	fentanyl_
+89	Base solution	Propofol 1000 mg/100 mL Premix 1^000 mg [20 mcg/kg/min] + PREMIX DO NOT ADD TO BAG (wt required) 10
+90	vecuronium	vecuronium
+91	metolazone	metolazone_
+92	albumin human	albumin human 25%  intravenous solution
+93	bumetanide	Bumex
+94	amiodarone	amiodarone
+95	ascorbic acid	Vitamin C
+96	Dextrose 10% in Water	Dextrose 10% in Water 1^000 mL
+97	oxycodone	oxycodone
+98	Lactated Ringers	Lactated Ringers 1^000 mL
+99	Lactated Ringers	Lactated Ringers (for bolus)
+100	levothyroxine	levothyroxine
+101	erythromycin ophthalmic	erythromycin ophthalmic 0.5% ointment
+102	Lactated Ringers	Lactated Ringers 1000 mL
+103	potassium chloride	potassium chloride 10 mEq / 100 ml intravenous solution
+104	sodium hypochlorite topical	Dakins Solution 1/8 Strength (0.0625%) topical solution
+105	lansoprazole	lansoprazole solutab (Prevacid)
+106	cellulose	Surgicel 2X3
+107	acetaminophen	acetaminophen
+108	fluconazole	Diflucan
+109	furosemide	Lasix
+110	warfarin	Coumadin
+111	metoprolol	Lopressor
+112	cholecalciferol	cholecalciferol

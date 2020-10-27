@@ -1,0 +1,11 @@
+
+<div class="contents tab-pane" id={{ div_id }}>
+        <div class="tab-content col-md-12">
+            {% for procedure in procedures_dict %}
+                {% autoescape off %}
+                    <div id="{{ div_id }}{{ forloop.counter0 }}" onclick="add_vertical_point({{procedure.js_time}})" class="procedures"><p></p>
+                        <button>{{ procedure.date }} | Mark Date</button><p> {{ procedure.text }}</p><hr></div>
+                {% endautoescape %}
+            {% endfor %}
+        </div>
+</div>
