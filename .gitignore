@@ -1,5 +1,6 @@
 # Don't track content of these folders
 venv/*
+resources/100k_synthea_covid19_csv/*
 
 SYM_LIST.txt
 manual_input/*.txt
