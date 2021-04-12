@@ -1,14 +1,10 @@
 """
-manage.py
+SEMRproject/urls.py
 version 3.0
 package github.com/ajk77/SimpleEMRSystem
 Modified by AndrewJKing.com|@andrewsjourney
 
-To localy deploy interface:
-Open Bitnami Django Stack Environment with use_djangostack.bat.
-cd into your project directory (the directory containing this file)
-enter>"python manage.py runserver"
-open web browser to http://127.0.0.1:8000/SEMR/
+This file sets the base URL pattern. 
 
 ---LICENSE---
 This file is part of LEMRinterface
@@ -27,13 +23,22 @@ You should have received a copy of the GNU General Public License
 along with LEMRinterface.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-#!/usr/bin/env python
-import os
-import sys
+from django.conf.urls import include, url
 
-if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SEMRproject.settings")
+# Uncomment the next two lines to enable the admin:
+# from django.contrib import admin
+# admin.autodiscover()
 
-    from django.core.management import execute_from_command_line
+app_name = "SEMRinterface"
 
-    execute_from_command_line(sys.argv)
+urlpatterns = [
+    url(r'^SEMRinterface/', include('SEMRinterface.urls'))
+    ]
+
+
+# Uncomment the admin/doc line below to enable admin documentation:
+# url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+
+# Uncomment the next line to enable the admin:
+# url(r'^admin/', include(admin.site.urls)),
+

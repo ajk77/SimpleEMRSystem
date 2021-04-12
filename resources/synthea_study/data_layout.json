@@ -1,0 +1,7 @@
+{
+"title_bar": ["id", "name", "age", "sex", "race", "ethnicity"],
+"physio_panel_groups": ["Physio", "O2_Therapy"],
+"med_panel_groups":["All_routes"],
+"lab_panel_groups": ["CBC", "Chemistry", "Liver_Function", "Lipid_Chemistry", "Blood_Gases", "Coags", "Oncology", "Urinalysis", "UNASSIGNED"],
+"note_panel_groups": ["Careplan", "Condition", "Device", "Procedure", "Allergies", "Images", "Immunizations"]
+}

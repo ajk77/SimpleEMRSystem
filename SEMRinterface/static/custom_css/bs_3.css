@@ -1,0 +1,378 @@
+body {
+    padding-top: 49.5px !important;
+}
+
+.container{
+    min-width: 100%;
+}
+
+.labbox{
+    height: 88.1vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    /*padding-top: 35px;*/
+}
+
+.notebox{
+    height: 70.3vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    /*padding-top: 35px;*/
+}
+
+.taskbox{
+    height: 25vh;
+    background: rgba(81, 245, 235, 0.8);
+    /*overflow-y: hidden;*/
+    overflow-x: hidden;
+    /*padding-top: 35px;*/
+}
+
+.notetaskbox{
+    height: 95.3vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    /*padding-top: 35px;*/
+}
+
+.vitmedbox{
+    height: 88.1vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    /*padding-top: 35px;*/
+}
+
+.medbox{
+    height: 88.1vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.half-vitmedbox{
+    height: 70vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    /*padding-top: 35px;*/
+}
+
+.micro-vitmedbox{
+    height: 18vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    /*padding-top: 35px;*/
+}
+
+.t-border{
+    border-top: solid;
+}
+
+.lab-group {
+    border-style:solid;
+    border-width:1px;
+    border-color: #888888;
+    background: #fbfbfb;
+    /*display: none;  this might be a temporary change */
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.chartrow {
+    /*width: 30%;
+    margin: 10px;*/
+    border-radius: 10px;
+    width: 22%;
+    margin: 6px;
+    margin-right: 12px;
+    letter-spacing: -0.31em;
+    float: left;
+    background: #dfdfdf;
+    boarder-width: thin;
+    boarder-style: solid;
+
+}
+
+.vitalrow, .iorow, .medrow{
+    border-radius: 10px;
+    width: 90%;
+    margin: 5px;
+    margin-left: 14px;
+    letter-spacing: -0.31em;
+    float: left;
+    background: #dfdfdf;
+    boarder-width: thin;
+    boarder-style: solid;
+}
+
+.scroll-box{
+    padding-right:0;
+    padding-left:0;
+}
+
+.timepane{
+    padding-right: 15px;
+    padding-left: 0px;
+    background: #808080;
+  /*  position:absolute fixed;
+    left:0px;
+    top:0px;
+    z-index: 10;*/
+}
+
+a:active {
+    background-color: yellow;
+}
+
+.less-pad{
+    padding: 10px 10px !important;
+}
+
+.even-less-pad{
+    padding: 10px 6px !important;
+}
+
+.timerow{
+    background: #808080;
+    color: #FFFFFF;
+    width: 20%;
+    float: left;
+    margin-left: 14px;
+    margin-right: 14px;
+}
+
+.vit-timerow{
+    background: #808080;
+    color: #FFFFFF;
+    width: 90%;
+    margin-left: 14px;
+    margin-right: 14px;
+    float: left;
+}
+
+.io-timerow{
+    background: #808080;
+    color: #FFFFFF;
+    width: 80%;
+    margin-left: 40px;
+    margin-right: 14px;
+    float: left;
+}
+
+.title{
+    text-align:center;
+    background: #B0B0B0 ;
+    /*color: black;
+    font-weight:bold;*/
+    color: white;
+
+}
+
+.topchartrow {
+    width: auto;
+    letter-spacing: -0.31em;
+    background: #FFFFB2;
+    border-bottom-style:solid;
+    /*border-width:1px;*/
+    border-color: #888888;
+
+}
+
+.charttitlerow {
+    width: 100%;
+    background: #e8e8e8;
+    font-weight: bold;
+    letter-spacing: normal;
+    /*text-indent:50px;*/
+    float:left;
+    text-align: center;
+}
+
+.chartcol1, .chartcol2, .chartcol3, .chartcolfull, .chartcolTS{
+    display: inline-block;
+    vertical-align: middle;
+    border: 0 solid black;
+    padding: 0;
+    margin: 0;
+    letter-spacing: normal;
+    font-size: 12pt;
+    overflow: hidden;
+}
+
+.chartcol1 {
+    width: 65%;
+    margin-left: 10px;
+    margin-right: 10px;
+    white-space: nowrap ;
+    text-overflow: ellipsis;
+}
+
+.chartcol2 {
+    width: 25%;
+    white-space: nowrap ;
+    text-overflow: ellipsis;
+}
+
+.chartcol3 {
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    padding-right: 10px;
+    width: 100%;
+    /*display: show;*/
+
+}
+
+.chartcolfull{
+    width:100%;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
+    background: white;
+
+}
+
+.chartcolTS{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    width: 15%;
+    /*z-index: 10px;*/
+}
+
+.n-button{
+    width: 75%;
+    text-align: left;
+    background-color: #e7e7e7;
+}
+
+/*selected button*/
+.v-button{
+    width: 75%;
+    text-align: left;
+    color: black;
+    background-color: #F5F5DC;
+}
+
+.m-button{
+    width: 20%;
+    text-align: left;
+    color: black;
+    background-color: #e7e7e7;
+}
+
+
+.red-text{
+    color: darkred;
+    font-weight: bold;
+}
+
+.report {
+    margin-left: 12px;
+    margin-right: 0px;
+    /*height: 90%;*/
+    font-family: Verdana;
+    /*font-weight: bold;*/
+    overflow-x: hidden;
+    overflow-y: auto;
+    height:63vh;
+}
+
+.procedures {
+    margin-left: 12px;
+    margin-right: 0px;
+    font-family: Verdana;
+    overflow: auto;
+}
+
+.note{
+    margin: 15px;
+}
+
+.task {
+    font-size: 16px;
+}
+
+textarea {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.navbar-text {
+    font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow:hidden;
+}
+
+.navbar-nav > li > a {
+    font-weight: bold;
+}
+
+.navbar-nav > li {
+    font-weight: bold;
+}
+
+.lab_groupings{
+    margin-left: 5px;
+    border-right: solid;
+    /*border-width: 1px;*/
+    border-color: black;
+    color:black;
+}
+
+.expander{
+    float: right;
+    margin-right:10px;
+    font-size: 8pt;
+
+}
+
+.m_h{
+    max-height:500px;
+    overflow:auto;
+    width: 85%;
+}
+
+.units{
+
+}
+
+.shower{
+    display: none;
+}
+
+#loading_new_patient {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(192, 192, 192, 0.5);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.highcharts-container{width:100% !important; height:100% !important;}
+
+.center-div{
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 800px;
+    height: 150px;
+    background-color: #ffffff;
+    text-align: center;
+    border-radius: 3px;
+    border-style: solid;
+    z-index: 100;
+    padding: 10px;
+}
+
+p.thick {
+    font-weight: 900 !important;
+}

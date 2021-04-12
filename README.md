@@ -2,8 +2,6 @@
 
 This code can be used for Electronic Medical Record Research.
 
-This system was built to facilitate the development a Learning EMR (LEMR) system. 
-
 ## Getting Started
 
 First, have a look in the screenshots directory to become familiar with the interface design. 
@@ -23,7 +21,7 @@ Python 3 or Docker Compose
 
 #### Docker
 
-1. Clone repository
+1. Clone repository 
 
 #### Python installation notes
 It is strongly recommended that you use a virtual environment.
@@ -39,37 +37,46 @@ It is strongly recommended that you use a virtual environment.
 
 1. cd into project directory
 2. enter "python manage.py runserver"
-3. open web browser to http://127.0.0.1:8000/LEMRinterface/
+3. open web browser to http://127.0.0.1:8000/SEMRinterface/
 4. terminate using ctrl+c
 
 #### Docker
-
-1. cd into project directory
+(update coming soon)
+1. cd into project directory 
 2. enter "docker-compose up"
-3. open web browser to http://127.0.0.1:8000/LEMRinterface/
+3. open web browser to http://127.0.0.1:8000/SEMRinterface/
 4. terminate using ctrl+c
 
 ### Notes
 
-The LEMRinterface in meant to run in full screen mode on a 1920 x 1080 resolution monitor. Responsive html is not
+The SEMRinterface in meant to run in full screen mode on a 1920 x 1080 resolution monitor. Responsive html is not
 currently supported. 
 
 ## Secondary Use
 
 ### Included data
-The repository includes three synthetic patient cases. They were created by scrambling a larger set of safe-harbor 
-(de-identified) patient cases. If data does not make logical sense, it is because of the scrambling process.
+Two example studies are included in the Simple EMR System repository: demo_study and synthea_study. Demo_study includes three synthetic patient cases created by scrambling the contents of de-identified records from a larger set of patients from a hospital’s Cerner EMR system. Synthea_study includes 25 intensive care unit (ICU) encounters from the Synthea COVID-19 dataset (available at https://synthea.mitre.org/downloads).
 
-Included case data can be found at (https://github.com/ajk77/SimpleEMRSystem/tree/master/resources/demo_study)
+Included case data can be found at:
+1. https://github.com/ajk77/SimpleEMRSystem/tree/master/resources/synthea_study
+2. https://github.com/ajk77/SimpleEMRSystem/tree/master/resources/demo_study (update coming soon)
 
 ### Importing custom patient data
-To use your own cases either:
-* Edit the case data found in the resources folder
-* Connect to your own database and edit settings.py, models.py, and loaddata.py. 
+To preprocess Synthea cases for display on the Simple EMR System: 
+1. Download the source data and extract it into the ‘resources’ folder. 
+2. Adjust parameters, such as the input and output directories, in the Synthea data loading script (‘loaddata_synthea.py’) and execute the script. 
+3. View details about each processed case in ‘list_case_dicts.json’. 
+4. Select cases to use in the study and add them to ‘case_details.json’ 
+5. assign them to users in ‘user_details.json’. 
+6. adjust display groups, medication routes, display names, and display locations in ‘variable_details.json,’ ‘med_details.json,’ and ‘data_layout.json.’ 
+
+To load in data from other sources, you will need to create a custom 'loaddata' file. If your data source is a database, consider usings Django's Models.py (https://docs.djangoproject.com/en/3.1/topics/db/models/). 
+
+You may also edit JSON file directly in order to create custom cases.
 
 ### Eye-tracking research
 Components related to eye-tracking are turned off in this version because accuracy across different environments can 
-not be guaranteed. If you are interested in using LEMRinterface with a remote eye-tracking device, please see the
+not be guaranteed. If you are interested in using SEMRinterface with a remote eye-tracking device, please see the
 following:
 * EyeBrowserPy (<https://github.com/ajk77/EyeBrowserPy>)
 * Leveraging Eye Tracking to Prioritize Relevant Medical Record Data: Comparative Machine Learning Study 
@@ -79,7 +86,7 @@ the EMR (<https://www.ncbi.nlm.nih.gov/pubmed/28815151>)
 
 ## Versioning
 
-Version 2.0. For the versions available, see https://github.com/ajk77/SimpleEMRSystem
+Version 3.0. For the versions available, see https://github.com/ajk77/SimpleEMRSystem
 
 ## Authors
 

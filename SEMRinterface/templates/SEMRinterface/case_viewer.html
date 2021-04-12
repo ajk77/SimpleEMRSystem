@@ -1,0 +1,246 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+<head>
+    <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org">
+    <title>SEMR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/custom_css/bs_3.css" rel="stylesheet">
+	<link rel="icon" href="/static/S.ico" type="image/x-icon" />
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Scrips for when you have an internet connetion
+    <script src="https://code.jquery.com/jquery.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/stock/highstock.js"  type="text/javascript"></script>
+    Otherwise load local versions below-->
+    <script src="/static/jcode/jquery.js"></script>
+    <script src="/static/jcode//highstock.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/emr_3.js"></script>
+</head>
+<body>
+<div class="glyphicon glyphicon-refresh" id="loading_new_patient"></div> <!-- this glyphicon blurrs the screen on loading -->
+<div class="container">
+<!-- Introduction popup -->
+	<div id="directions" class="center-div"><h4>New Patient: {{ case_id }}.
+	</h4><h4>{{dict_case_details|date_line}}
+	</h4><h4>Please use the available information to become familiar with this patient.</h4>
+		<input id="directions_button" type="button"  value="Okay" onclick="remove_directions()" disabled>
+	</div>
+<!-- end of Introduction popup -->
+
+<!-- Demographics bar -->
+<div class="row">
+	<div class="col-12 navbar-fixed-top navbar-inverse ">
+	{{ STATIC_URL }}
+		<ul class="nav navbar-nav">
+			<li><a href="/SEMRinterface/{{study_id}}/{{user_id}}/"><span class="glyphicon glyphicon-home" aria-hidden="false" style="color:greenyellow"></span></a></li>
+			{% for item in dict_data_layout.title_bar %}
+				<p class="navbar-text" style="color:#f5f5f5;">{{ item }}: {{ dict_demographics|keyvalue:item }}</p>
+			{% endfor %}
+			<p class="navbar-text" style="color:#f5f5f5;background-color:#222222;width:150px;" id="selectedP">&nbsp;<span id="selectedTime" class="glyphicon glyphicon-option-vertical" aria-hidden="true" style="color:black"></span></p>
+			<p class="navbar-text" style="color:#f5f5f5;"> Selector: </p>
+		</ul>
+					<div class="chartcolTS" id="time_selector">
+						<script>
+						{% autoescape off %}
+						getchartTS("div[id='time_selector']", {{dict_case_details}});
+						set_case_details({{dict_case_details}});
+						set_case_complete_url('{{study_id}}', '{{user_id}}');
+						{% endautoescape %}
+						</script>
+					</div>
+			<p class="navbar-text" style="color:#f5f5f5;float:right" id="selectedTimes"></p>
+	</div>
+</div>
+<!-- end of Demographics bar -->
+
+<!-- All Panels -->
+<div class="row">
+	<!-- Physio, Med, and Lab Panels --> 
+    <div class="col-lg-8 scroll-box">
+		<!-- Upper time row --> 
+		{% for i in list_1_2 %}
+        <div class="timepane col-md-3" >
+            <div class="vit-timerow" id="time">
+                <div class="chartcol3" id="lab-time{{i}}">
+					<script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time{{i}}']");
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+        </div>
+		{% endfor %}
+		<div class="timepane col-md-6" id="time_bar">
+		{% for i in list_3_4_5_6 %}	
+           <div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time{{i}}">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time{{i}}']");
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+		{% endfor %}
+        </div>
+		<!-- end of Upper time row --> 
+
+		<!-- Physio panel -->
+        <div class="col-lg-3 vitmedbox scroll-box">
+
+            <div class="col-lg-12 half-vitmedbox scroll-box" id="vit_tracking">
+                {% for group in dict_data_layout.physio_panel_groups %}
+				<div class="lab-group col-md-12" id="{{group}}">
+                    <div class="charttitlerow"  onclick="remove_vertical_point(true)">
+                        {{group}}
+                    </div>
+					<!-- chart rows will be added here via js -->
+                </div>
+				{% endfor %}
+            </div>
+            <div class="col-lg-12 micro-vitmedbox scroll-box t-border" id="io_tracking">
+                <div class="lab-group col-md-12" id="IO">
+				    Intake and output not avaliable
+                    <!-- IO chart goes here -->
+                </div>
+
+            </div>
+
+
+        </div>
+		<!-- end of Physio panel -->
+		
+		<!-- Med panel -->
+		<div class="col-lg-3 vitmedbox scroll-box">
+            <div class="col-lg-12 medbox scroll-box" id="med_tracking">
+				{% for group in dict_data_layout.med_panel_groups %}
+				<div class="lab-group col-md-12" id="{{group}}">
+					<div class="charttitlerow"  onclick="remove_vertical_point(true)">
+						{{group}}
+					</div>
+					<!-- chart rows will be added here via js -->
+				</div>
+				{% endfor %}
+            </div>
+        </div>
+		<!-- end of Med panel -->
+
+		<!-- Lab panel -->
+        <div class="col-lg-6 labbox scroll-box" id="lab_tracking">
+			{% for group in dict_data_layout.lab_panel_groups %}
+			<div class="lab-group col-md-12" id="{{group}}">
+				<div class="charttitlerow"  onclick="remove_vertical_point(true)">
+					{{group}}
+				</div>
+				<!-- chart rows will be added here via js -->
+			</div>
+			{% endfor %}
+<div> 	
+		{% for ob_code, content in dict_observations.items %}
+			<script>
+			{% autoescape off %}
+			add_observation_chart("{{ob_code}}", {{content}}, {{dict_variable_2_details|keyvalue:ob_code}}, {{ dict_data_layout.physio_panel_groups }})
+			{% endautoescape %}
+			</script>
+		{% endfor %}
+		
+		{% for med_code, content in dict_medications.items %}		
+			<script>
+			{% autoescape off %}
+			add_medication_chart("{{med_code}}", {{content}}, {{dict_med_2_details|keyvalue:med_code}})
+			{% endautoescape %}
+			</script>
+		{% endfor %}
+</div>
+        </div>
+		<!-- end of Lab panel -->
+		
+		<!-- Add charts -->
+
+		
+		
+		<!-- end of Add charts -->
+
+		<!-- Lower time row --> 
+		{% for i in list_1_2 %}
+        <div class="timepane col-md-3" >
+            <div class="vit-timerow" id="time">
+                <div class="chartcol3" id="lab-time1{{i}}">
+					<script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time1{{i}}']");
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+        </div>
+		{% endfor %}
+		<div class="timepane col-md-6" id="time_bar">
+		{% for i in list_3_4_5_6 %}	
+           <div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time1{{i}}">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time1{{i}}']");
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+		{% endfor %}
+        </div>
+		<!-- end of Lower time row --> 
+
+
+    </div>
+	<!-- end of Physio, Med, and Lab Panels --> 
+
+	<!-- Note Panel -->
+    <div class="col-lg-4 notetaskbox scroll-box">
+        <div class="col-lg-12 notebox scroll-box">
+            <ul class="nav nav-tabs nav-tabs-justified">
+			{% for group in dict_data_layout.note_panel_groups %}
+			<li class="nav-track" id="allergies">
+                <a href="#{{group}}" data-toggle="tab"  onclick="remove_vertical_point(true);" class="even-less-pad">{{ group|truncatechars:7 }} <span class="badge">{{ dict_notes.group|length }}</span></a>
+            </li>
+			{% endfor %}
+            </ul>
+
+            <div class="contentArea tab-content">
+				<!-- DS_note not included-->
+            </div>
+
+        </div>
+		<div class="col-lg-12 taskbox scroll-box t-border">
+			<div id="task" class="note task"><br>
+			{% if dict_case_details.0.instruction_set == "familiar" %}
+				Please use the available information to become familiar with this patient.
+			{% elif dict_case_details.0.instruction_set == "prepare" %}
+				Please prepare to present this case at morning rounds.
+			{% elif dict_case_details.0.instruction_set == "present" %}
+				Please present this case to the care team during rounds. Use the audio recorder to capture your presentation.  
+			{% elif dict_case_details.0.instruction_set == "select" %}
+				Please select the information you used when preparing to present this case.
+			{% else %}
+				Instruction_set missing. Please add it to case_viewer.html. 
+			{% endif %}
+				<hr>Then click
+				<input id='next_screen_button' type="button" value="continue" onclick="next_step();"></input>
+			</div>
+		</div>
+	</div>
+	<!-- end of Note Panel -->
+</div>
+<!-- end of All Panels -->
+
+</div>
+    <script>
+        show_loading();
+    </script>
+
+</body>
+</html>

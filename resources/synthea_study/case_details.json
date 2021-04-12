@@ -1,0 +1,5 @@
+{
+"47d7e44e-94df-461f-b8a3-d84f07541fe1": [{"min_t": 1583384400000.0, "max_t": 1583962698000.0, "check_boxes": 0, "instruction_set": "familiar"}, {"min_t": 1583384400000.0, "max_t": 1584049098000.0, "check_boxes": 1, "instruction_set": "select"}],
+"123583c1-a974-463e-871c-2626f08a4cea": [{"min_t": 1584060690000.0, "max_t": 1584375990000.0, "check_boxes": 0, "instruction_set": "familiar"}, {"min_t": 1584060690000.0, "max_t": 1584375990000.0, "check_boxes": 1, "instruction_set": "select"}],
+"b96636de-090f-4349-8928-e605f02bc730": [{"min_t": 1584778465000.0, "max_t": 1585046425000.0, "check_boxes": 0, "instruction_set": "familiar"}, {"min_t": 1584778465000.0, "max_t": 1585046425000.0, "check_boxes": 1, "instruction_set": "select"}]
+}

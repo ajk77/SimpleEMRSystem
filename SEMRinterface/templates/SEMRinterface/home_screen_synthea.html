@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style type="text/css">
+        .info-div {
+            padding-left: 10px;
+            padding-right: 10px;
+            width: 1200px;
+            background-color: #DCDCDC;
+            text-align: left;
+            border-radius: 3px;
+        }
+        </style>
+
+    <script src="/static/jcode/jquery.js"></script>
+    <script>
+    $(document).ready(function(){
+        is_full_screen();
+    });
+
+    function is_full_screen(){
+    // +1 is because firefox add an bar of pixel height 1 to the top of full screen that pops down the menu bar
+    // the pop down functionality is disabled when F11 is pressed three times.
+    if(screen.width === window.innerWidth && screen.height === window.innerHeight){
+        $('#fs').hide();
+    }else{
+        $('#fs').show();
+    }}
+    </script>
+
+</head>
+<body bgcolor="#E6E6FA">
+<h1>Welcome to the Simple EMR (SEMR) System Home Screen</h1>
+<div id="fs"><h2>Please reload in full screen (F11 then F5)</h2></div>
+<div class="info-div">
+    <p> SEMR is a novel take on displaying a patient's electronic medical record (emr) data.
+	</p><p> Use the links below to view synthetic inpatient case's from Mitre's Syntheic Mass data set. 
+
+</p>
+    <table width="50%" border="1"><tr><th>Synthea Case</th><th>Admit</th><th>Discharge</th></tr>
+    {% for encounter in cases %}
+            <tr><th><a href="http://127.0.0.1:8000/LEMRinterface/SyntheaViewer/{{ encounter.id }}"><button>{{ encounter.name }}</button></a> </th><th>{{ encounter.admittime }} </th><th> 
+            {{ encounter.dischargetime }}</th></tr>
+    {% endfor %}
+    </table>
+    </br></br>
+
+</div>
+
+</body>
+</html>

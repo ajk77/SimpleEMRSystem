@@ -1,0 +1,351 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+<head>
+    <meta name="generator" content=
+            "HTML Tidy for Windows (vers 14 February 2006), see www.w3.org">
+    <title> LEMR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap <p>Option-vertical icon: <span class="glyphicon glyphicon-option-vertical"></span></p>-->
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/custom_css/bs_3.css" rel="stylesheet">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <script src="http://code.highcharts.com/stock/highstock.js"></script>
+    <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+    <![endif]-->
+
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Scrips for when you have an internet connetion
+    <script src="https://code.jquery.com/jquery.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/stock/highstock.js"  type="text/javascript"></script>
+    Otherwise use what is below-->
+    <script src="/static/jcode/jquery.js"></script>
+    <script src="/static/jcode//highstock.js"></script>
+    <!--<script src="/static/jcode//jquery.sortable.min.js"></script>-->
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/emr_3.js"></script>
+    <script>
+        {% autoescape off %}
+            setDefaultTimes({{ global_time }});
+            set_ids('{{demographics_dict.id}}', 'first_four');
+            set_view('{{ first_view }}');
+        {% endautoescape %}
+    </script>
+</head>
+<body>
+<div class="glyphicon glyphicon-refresh" id="loading_new_patient"></div>
+<div class="container">
+<div class="row">
+<div class="col-12 navbar-fixed-top navbar-inverse ">
+{{ STATIC_URL }}
+    <ul class="nav navbar-nav">
+        <li><!--<a href="/LEMRinterface/"><span class="glyphicon glyphicon-home" aria-hidden="true" style="color:greenyellow"></span></a></li>-->
+        <p class="navbar-text" style="color:#f5f5f5;">{{ demographics_dict.name }}</p>
+        <p class="navbar-text" style="color:#f5f5f5;">{{ demographics_dict.age }} year old {{ demographics_dict.sex|full_gender }}</p>
+        <p class="navbar-text" style="color:#f5f5f5;">{{ demographics_dict.race }} - {{ demographics_dict.ethnicity }}</p>
+        <p class="navbar-text" style="color:#f5f5f5;background-color:#222222;width:150px;" id="selectedP">&nbsp;<span id="selectedTime" class="glyphicon glyphicon-option-vertical" aria-hidden="true" style="color:black"></span></p>
+        <p class="navbar-text" style="color:#f5f5f5;"> Time Selector: </p>
+    </ul>
+                <div class="chartcolTS" id="time_selector">
+                    <script>
+                    {% autoescape off %}
+                    getchartTS("div[id='time_selector']", {{ global_time|safe }} );
+                    {% endautoescape %}
+                    </script>
+                </div>
+        <p class="navbar-text" style="color:#f5f5f5;float:right" id="selectedTimes"></p>
+</div>
+</div>
+    {% if first_view %}
+    <div id="directions" class="center-div"><h4>New Patient: {{ demographics_dict.age }} year old {{ demographics_dict.sex|full_gender }}.
+    </h4><h4>{{global_time|date_line}}
+    </h4><h4>Please use the available information to become familiar with this patient.</h4>
+        <input id="directions_button" type="button"  value="Okay" onclick="remove_directions()" disabled>
+        <input id="break_button" type="button" value="Take a Break" onclick="take_a_break('{{ user_id }}')" disabled></div>
+{% else %}
+    <div id="directions" class="center-div"><h4>24 hours have passed. Please become up to date with this patient’s problems and latest data.
+        </h4><h4>{{global_time|date_line}}</h4>
+        <input id="directions_button" type="button"  value="Okay" onclick="remove_directions()" disabled>
+        </div>
+{% endif %}
+
+<div class="row">
+
+    <div class="col-lg-8 scroll-box">
+        <div class="timepane col-md-3" >
+            <div class="vit-timerow" id="time">
+                <div class="chartcol3" id="lab-time1">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time1']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+        </div><div class="timepane col-md-3" >
+            <div class="vit-timerow" id="time">
+                <div class="chartcol3" id="lab-time2">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time2']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+        </div><div class="timepane col-md-6" id="time_bar">
+           <div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time3">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time3']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div><div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time4">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time4']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div><div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time5">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time5']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div><div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time6">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time6']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+        </div>
+
+
+        <div class="col-lg-3 vitmedbox scroll-box">
+
+            <div class="col-lg-12 half-vitmedbox scroll-box" id="vit_tracking">
+                <div class="lab-group col-md-12" id="Vitals">
+                        <div class="charttitlerow"  onclick="remove_vertical_point(true)">
+                            Vitals
+                      </div>
+
+                    {% for lab in group_info|get_labnames:'Physio' %}
+                        {% if lab in vital_info %}
+                       <div class="vitalrow" id="{{ lab }}" onclick="activate('{{ lab }}')">
+                           <div class="chartcol1 shower"></div>
+                            <div class="chartcol3" id="lab{{ lab }}" >
+                                <script>
+                                {% autoescape off %}
+                                get_chart("{{ lab }}", "not blood pressure", "{{ vital_info|get_json_arr:lab }}", "{{ display_names|get_json_arr:lab }}");
+                                showgroup("Vitals");
+                                {% endautoescape %}
+                                </script>
+                            </div>
+                       </div>
+                        {% endif %}
+                    {% endfor %}
+                </div><!-- REMOVED VENTILATOR BLOCK -->
+            </div>
+            <div class="col-lg-12 micro-vitmedbox scroll-box t-border" id="io_tracking">
+                <div class="lab-group col-md-12" id="IO">
+                        <!-- REMOVED IO BLOCK -->
+                </div>
+            </div>
+
+
+        </div><div class="col-lg-3 vitmedbox scroll-box">
+
+            <div class="col-lg-12 medbox scroll-box" id="med_tracking">
+                {% for route in med_routes %}
+                <div class="lab-group col-md-12" id="{{route}}">
+                        <div class="charttitlerow"  onclick="remove_vertical_point(true)">
+                            {{ route}}
+                      </div>
+
+                    {% for med in routes_mapping|get_meds:route %}
+
+                        {% if med in med_info %}
+                        <div class="medrow" id="{{ med }}" onclick="activate('{{ med }}')">
+                           <div class="chartcol1 shower" ></div>
+                            <div class="chartcol3" id="med{{ med }}" >
+                                <script>
+                                    {% autoescape off %}
+                                        get_med_chart("{{ med }}", "{{ med_info|get_json_arr:med  }}", "{{ display_med_names|get_json_arr:med }}");
+                                        showgroup("{{ route }}");
+                                    {% endautoescape %}
+                                </script>
+                            </div>
+                       </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                   {% endfor %}
+            </div>
+
+
+        </div>
+
+        <div class="col-lg-6 labbox scroll-box" id="lab_tracking">
+               {% for group_name in group_order %}
+            <div class="lab-group col-md-12" id="{{group_name}}">
+                    <div class="charttitlerow"  onclick="remove_vertical_point(true)">
+                        {{  group_name}}
+                    </div>
+
+                {% for lab in group_info|get_labnames:group_name %}
+                    {% if lab in lab_info %}
+                   <div class="chartrow" id="{{ lab }}" onclick="activate('{{ lab }}')">
+                   <div class="chartcol1 shower"> </div>
+                       <div class="chartcol3" id="lab{{ lab }}"  >
+                           <script>
+                            {% autoescape off %}
+                            get_chart("{{ lab }}", "not bp", '{{ lab_info|get_json_arr:lab }}', '{{ display_names|get_json_arr:lab }}');
+                            showgroup("{{ group_name }}");
+                            {% endautoescape %}
+                            </script>
+                        </div>
+                   </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+               {% endfor %}
+            </div>
+
+    <div class="timepane col-md-3" >
+            <div class="vit-timerow" id="time">
+                <div class="chartcol3" id="lab-time11">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time11']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+        </div><div class="timepane col-md-3" >
+            <div class="vit-timerow" id="time">
+                <div class="chartcol3" id="lab-time12">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time12']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+        </div><div class="timepane col-md-6" id="time_bar">
+           <div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time13">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time13']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div><div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time14">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time14']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div><div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time15">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time15']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div><div class="timerow" id="time">
+                <div class="chartcol3" id="lab-time16">
+                    <script>
+                    {% autoescape off %}
+                    getchartT("div[id='lab-time16']", {{ global_time|safe }});
+                    {% endautoescape %}
+                    </script>
+                </div>
+           </div>
+        </div>
+
+    </div>
+
+    <div class="col-lg-4 notetaskbox scroll-box">
+        <div class="col-lg-12 notebox scroll-box">
+            <ul class="nav nav-tabs nav-tabs-justified">
+            <li class="nav-track" id="allergies">
+                <a href="#allergies-reports" data-toggle="tab"  onclick="remove_vertical_point(true);" class="even-less-pad">Algy. <span class="badge">{{ allergies|length }}</span></a>
+            </li><li class="active nav-track" id="careplan">
+                <a href="#careplan-notes" data-toggle="tab" onclick="remove_vertical_point(true);" class="even-less-pad">CarePlan <span class="badge">{{ careplan|length }}</span></a>
+            </li><li class="nav-track" id="condition">
+                <a href="#condition-notes" data-toggle="tab" onclick="remove_vertical_point(true);" class="even-less-pad">Condition <span class="badge">{{ Condition|length }}</span></a>
+            </li><li class="nav-track" id="device">
+                <a href="#device-reports" data-toggle="tab" onclick="remove_vertical_point(true);" class="even-less-pad">Device <span class="badge">{{  Device|length }}</span></a>
+            </li><li class="nav-track" id="Images">
+                <a href="#Images-reports" data-toggle="tab" onclick="remove_vertical_point(true);" class="even-less-pad">Images <span class="badge">{{  imagingstudy|length }}</span></a>
+            </li><li class="nav-track" id="immunizations">
+                <a href="#immunizations-reports" data-toggle="tab" onclick="remove_vertical_point(true);" class="even-less-pad">Immunizations <span class="badge">{{ immunizations|length }}</span></a>
+            </li><li class="nav-track" id="procedure">
+                <a href="#procedures" data-toggle="tab" onclick="remove_vertical_point(true);" class="even-less-pad">Proc. <span class="badge">{{ procedures|length }}</span></a>
+            </li></ul>
+
+            <div class="contentArea tab-content">
+                {% include "LEMRinterface/procedure_template_synthea.html" with procedures_dict=allergies div_id="allergies-reports" %}
+                {% include "LEMRinterface/procedure_template_synthea.html" with procedures_dict=careplan div_id="careplan-notes" %}
+                {% include "LEMRinterface/procedure_template_synthea.html" with procedures_dict=condition div_id="condition-notes" %}
+                {% include "LEMRinterface/procedure_template_synthea.html" with procedures_dict=device div_id="device-reports" %}
+                {% include "LEMRinterface/procedure_template_synthea.html" with procedures_dict=imagingstudy div_id="Images-reports" %}
+                {% include "LEMRinterface/procedure_template_synthea.html" with procedures_dict=immunizations  div_id="immunizations-reports" %}
+                {% include "LEMRinterface/procedure_template_synthea.html" with procedures_dict=procedures div_id="procedures" %}
+                <!-- DS_note not included-->
+            </div>
+
+        </div>
+        {% if first_view %}
+            <div class="col-lg-12 taskbox scroll-box t-border">
+            <div id="task" class="note task"><br>
+                Please use the available information to become familiar with this patient.
+                <hr>Then click
+                <input id='next_screen_button' type="button" value="continue to next day" onclick="show_loading();link_press('/LEMRinterface/{{ demographics_dict.id }}/{{ user_id }}/2')"></input>
+            </div>
+        {% else %}
+            <div class="col-lg-12 taskbox scroll-box t-border">
+            <div id="task" class="note task"><br>
+                24 hours have passed. Please become up to date with this patient’s problems and latest data.
+                <hr>Then click
+                <input id='next_screen_button' type="button" value="continue" onclick="create_rounding_report_screen('/LEMRinterface/{{ next_patient }}/{{ user_id }}/1')"></input>
+            </div>
+        {% endif %}
+
+
+    </div>
+</div>
+</div>
+    <script>
+        {% for lab in labs_to_highlight %}
+           highlight('{{ lab }}');
+        {% endfor %}
+        set_only_show_highlights({{ only_show_highlights }});
+        set_arm('{{ arm }}');
+        show_loading();
+    </script>
+
+</body>
+</html>
