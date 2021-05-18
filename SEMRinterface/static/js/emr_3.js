@@ -10,6 +10,10 @@ var displayed_max_t = null; // The max time of the current time step
 var step = 0; // The step in case_details.json
 var case_details; // the case details
 var case_complete_url; // url runs when case if finished
+var next_step_url; // url runs to advance interface
+var study_id;
+var user_id;
+var case_id;
 
 
 // Page loading activites //
@@ -50,22 +54,31 @@ function remove_directions(){
 }
 
 // function to save case detials //
-function set_case_details(details){
+function set_case_details(details, s_id, u_id, c_id, t_s){
 	case_details = details;
+	step = t_s;
+	study_id = s_id;
+	user_id = u_id;
+	case_id = c_id;
 }
 
 // function to save case compelte url //
-function set_case_complete_url(case_id, user_id){
-	case_complete_url = '/SEMRinterface/'+case_id+'/'+user_id+'/';
+function set_case_complete_url(){
+	case_complete_url = '/SEMRinterface/markcompleteurl/'+ study_id + '/' +user_id+'/'+case_id+'/';
+}
+
+// function to set next step url //
+function set_next_step_url(){
+	set_case_complete_url();
+	next_step = String(step+1)
+	next_step_url = '/SEMRinterface/' + study_id + '/' +user_id+'/'+case_id + '/' + next_step + '/';	
+	console.log(next_step_url);
 }
 
 // Functionality for the continue button //
-function next_step(){
+function link_advance(){
 	if (case_details.length-1 > step) {
-		step+=1;
-		getchartTS($(time_selector),case_details,step);
-		remove_vertical_point(true);  // updates bands
-		updateExtremes();
+		link_press(next_step_url);
 	} else {
 
 		link_press(case_complete_url);
@@ -135,6 +148,7 @@ function updateExtremes(){
         }
     }
 }
+
 
 // highlight chart //
 function highlight(id){
@@ -255,6 +269,7 @@ function activate(id){
 
 // Create lab chart helper //
 function add_observation_chart(obs_id, observation_details, variable_details, panel_1_groups){
+	if (obs_id == 'VTDIAV') {console.log(observation_details)};
 	/*
 		observation_details is from observations.json
 		variable_details is from variable_details.json
@@ -262,13 +277,19 @@ function add_observation_chart(obs_id, observation_details, variable_details, pa
 	var chart_container_id = 'chart'+obs_id
 	if (panel_1_groups.includes(variable_details.display_group)) {
 		div_str = '<div class="vitalrow" id="row'+obs_id+'">' 	
+	}else if (obs_id == 'IO'){
+		div_str = '<div class="iorow" id="row'+obs_id+'">' 
 	} else {
 		div_str = '<div class="chartrow" id="row'+obs_id+'">' 
 	}
 	div_str += '<div class="chartcol1 shower"> </div>'
 	div_str += '<div class="chartcol3" id="'+chart_container_id+'"></div></div>'
 	$('#'+variable_details.display_group).append(div_str);		
-	get_lab_chart(chart_container_id, observation_details, variable_details);
+	if (obs_id == 'IO'){
+		get_io_chart(chart_container_id, observation_details, variable_details);
+	} else {
+		get_lab_chart(chart_container_id, observation_details, variable_details);
+	}
 }
 
 // Create lab chart //
@@ -279,12 +300,13 @@ function get_lab_chart(chart_container_id, observation_details, variable_details
 		var show_y_axis_labels = true;
 		var left_spacing = 10;
 		var title_x_spacing = 0;
+		var isDiscrete = false; 
 	} else if (observation_details.discrete_lab_data.length > 0) {
-		console.log('in descrete values');
 		var chart_data = observation_details.discrete_lab_data;
 		var show_y_axis_labels = false;
         var left_spacing = 34;
         var title_x_spacing = -24
+		var isDiscrete = true; 
 	} else {
 		console.log('no lab for' + variable_details.display_name);
 		return;
@@ -295,11 +317,15 @@ function get_lab_chart(chart_container_id, observation_details, variable_details
 	for (var i = chart_data[0].data.length - 1; i >= 0; i--) {
 		if(chart_data[0].data[i][0] <= displayed_max_t){
 			most_recent_val = chart_data[0].data[i][1];
+			if (chart_container_id == 'chartVTDIAV') {
+				most_recent_val = chart_data[1].data[i][1] + '/' + chart_data[0].data[i][1];	
+			}
+			if (isDiscrete){
+				most_recent_val = observation_details.discrete_nominal_to_yIndex[most_recent_val];
+			}
 			break;
 		}
 	}
-	
-	//	console.log(chart_container_id, chart_data[0].data.length, variable_details.display_name);
 
 	// create and render chart //
     var currChart = new Highcharts.Chart({
@@ -318,7 +344,7 @@ function get_lab_chart(chart_container_id, observation_details, variable_details
             }
         },
         credits: {
-            text: '<p style="font-size:13px">' + most_recent_val + '</p><br><p style="font-size:8px">' + variable_details.units + '</p>',
+            text: '<p style="font-size:13px">' + most_recent_val + '</p><br><p style="font-size:8px">' + observation_details.units + '</p>',
             href: "",
             zIndex: 0,
             position: {align: "right", verticalAlign: "bottom", x: -8, y: -66},
@@ -332,7 +358,7 @@ function get_lab_chart(chart_container_id, observation_details, variable_details
             gridLineColor: 'grey',
             plotBands: [{
                 from: variable_details.dflt_normal_ranges[0],
-                to: variable_details.dflt_normal_ranges[0],
+                to: variable_details.dflt_normal_ranges[1],
                 color: 'rgba(68, 170, 213, 0.4)'
             }]//,
             //min: variable_details.dflt_y_axis_ranges[0],
@@ -370,8 +396,11 @@ function get_lab_chart(chart_container_id, observation_details, variable_details
             formatter: function () {
                 if(this.series.name === 'numeric_values') {
                     return '<p style="font-size:12px">' + this.y + '</p>'
-                }else{
-                    return '<p style="font-size:12px">' + chart_data.discrete_nominal_to_yIndex[this.y] + '</p>'
+                }else if(this.series.name === 'dias' || this.series.name === 'syst'){
+					index = this.point.series.xData.indexOf(this.point.x);
+                    return chart_data[1].data[index][1] + '/' + chart_data[0].data[index][1];
+				}else{
+                    return '<p style="font-size:12px">' + observation_details.discrete_nominal_to_yIndex[this.y] + '</p>'
                 }
             },
             backgroundColor: "rgba(256,256,256,1)",
@@ -484,17 +513,11 @@ function get_med_chart(chart_container_id, medication_details, med_details) {
     chartrowids.push(chart_container_id);
 }
 
-/*
-function get_io_chart(chartTitle, predata, displayText) {
-    predata = predata.replace(/'/g, '"');
-    var post_data = $.parseJSON(predata);
 
-    var container = 'lab'+chartTitle;
-    var currChart;
-
-    currChart = new Highcharts.Chart({
+function get_io_chart(chart_container_id, observation_details, variable_details) {
+    var currChart = new Highcharts.Chart({
         chart: {
-            renderTo: container,
+            renderTo: chart_container_id,
             height: 150,
             spacingLeft:6,
             spacingBottom:6,
@@ -533,7 +556,7 @@ function get_io_chart(chartTitle, predata, displayText) {
                 }]
             }
         ],
-        series: post_data[0],
+        series: observation_details.numeric_lab_data,
         plotOptions: {
             series: {point: { events: {click: function () {add_vertical_point(this.x);}}}},
             column: {stacking: 'normal'}
@@ -549,9 +572,9 @@ function get_io_chart(chartTitle, predata, displayText) {
 
     // discrete values
     chartsContainers.push(currChart);
-    chartrowids.push(chartTitle);
+    chartrowids.push(chart_container_id);
 }
-*/
+
 
 // Creates the time chart //
 function getchartT(id) {
@@ -630,122 +653,14 @@ function getchartTS(id,case_details,time_step=0) {
 	displayed_max_t = case_details[time_step].max_t;
 }
 
-/*
-// Creates post for sending data to server // 
-function create_manual_input_post(new_link) {
-	console.log("-saving manual input-"); // sanity check
-	var csrf_token = getCookie('csrftoken');
-	var return_selected_items = '';
-	if (study_arm === 'C'){
-		return_selected_items = selected_items.toString()
-	}
-	$.ajax({
-		url : "http://127.0.0.1:8000/LEMRinterface/save_input/", // the endpoint
-		type : "POST", // http method
-		data : { csrfmiddlewaretoken: csrf_token, the_timestamp : Date.now().toString(), pat_id : patient_id, selections : return_selected_items, rating : case_difficulty, reason: clinical_impact }, // data sent with the post request
-		// handle a successful response
-		success : function(msg) {
-			console.log(msg); // another sanity check
-		},
-		// handle a non-successful response
-		error : function(xhr,errmsg,err) {
-		   console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-		},
-		complete :  function() {link_press(new_link)}
-	});
-	return false;
-}
-
-// Gets cookie from webpage //
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1);
-        if (c.indexOf(name) === 0) return c.substring(name.length,c.length);
-    }
-    return "";
-}
-
-*/
-
-/*
-// Creates rounding report screen // 
-function create_rounding_report_screen(next_link) {
-    selection_screen = true;
-    next_patient_link = next_link;
-    var task_text =
-        "<p>Now that you are up to date with this patient’s problems and latest data, could you please present the "
-        + "patient as if you were presenting during morning rounds, including pertinent positives and negatives, as "
-        + "well as your assessment and management plan for the day. Try to make it concise.</p>"
-        + "<p>Use the audio recorder to record your presentation.</p>"
-        + "<p>Start the recording with '<b>" + user_id + "</b> rounding for <b>" + short_patient_id + "</b>.'</p>"
-        + "<hr>Then click <input id='rate_complexity_continue' type='button' value='continue' "
-        + "onclick='create_rate_complexity_screen()'>.";
-    $("#task").html(task_text);
-    create_post(patient_id.toString(), Date.now().toString(), 'RoundingReport,0,0,0,0', 'RoundingReport,0,0,0,0');
-    //next is create rate complexity screen
-}
-
-// Creates complexity rating screen // 
-function create_rate_complexity_screen(){
-    var task_text =
-        "Rate the level of effort you exerted when becoming up to date with this patient’s problems and latest data:<br> "
-        + '<form><input type="radio" name="diff" value="1" onclick="activate_continue_button(1, true);">  1. low<br>'
-        + '<input type="radio" name="diff" value="2" onclick="activate_continue_button(2, true);">  2. below-average<br>'
-        + '<input type="radio" name="diff" value="3" onclick="activate_continue_button(3, true);">  3. average<br>'
-        + '<input type="radio" name="diff" value="4" onclick="activate_continue_button(4, true);">  4. above-average<br>'
-        + '<input type="radio" name="diff" value="5" onclick="activate_continue_button(5, true);">  5. high<br>'
-        + '</form>';
-
-    if (study_arm === 'C') { // if control -> next is selection screen
-        task_text +=
-            "<hr>Then click <input id='selection_screen_continue' type='button' value='continue' "
-            + "onclick='create_selection_screen()'>.";
-    } else if (study_arm === '1') {// if arm one -> next is next_link press
-        task_text +=
-            "<hr>Then click <input id='next_case_continue' type='button' value='next case' "
-            + "onclick='next_case_link_press()'>";
-    } else if (study_arm === '2'){    // if arm two -> next is show additional information
-        task_text +=
-           "<hr>Then click <input id='show_additional_info_continue' type='button' value='continue' "
-           + "onclick='show_additional_information()'>.";
-    }
-    $("#task").html(task_text);
-    create_post(patient_id.toString(), Date.now().toString(), 'ComplexityRating,0,0,0,0', 'ComplexityRating,0,0,0,0');
-}
 
 // Creates selection screen // 
 function create_selection_screen(){
-    var task_text =
-            "Select the pertinent information that you used when becoming up to date with this patient’s problems and latest data.\n"
-            + "<hr>Then click <input id='rounding_report_continue' type='button' value='next case' "
-            + "onclick='next_case_link_press()'>";
     $('.chartcol1').each(function (i, obj) {
         $(obj).html("<span class='glyphicon glyphicon-unchecked' aria-hidden='true'></span>");
     });
     $('.shower').show();
-    $("#task").html(task_text);
 }
 
-// Show all information for patient case //
-function show_additional_information(){
-    // show all the hidden labs
-    // this function will call create selection screen
-    only_show_highlights = false;
-    selection_screen = false;
-    var task_text =
-        "<p>Additional information in now being displayed.</p>"
-        + "<p>Considering the additional information, if you would like to revise your presentation, please do so now."
-        + "</p><p>Start the recording with "
-        + "'<b>" + user_id + "</b> revisions for <b>" + short_patient_id + "</b>.'</p>"
-        + "<hr>Then click <input id='selection_screen_continue' type='button' value='continue' "
-        + "onclick='create_rate_clinical_impact_screen()'>.";
-    $("#task").html(task_text);
-    create_post(patient_id.toString(), Date.now().toString(), 'ReviseReport,0,0,0,0', 'ReviseReport,0,0,0,0');
-    updateExtremes();
-}
-*/
 // fin //
 

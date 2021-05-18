@@ -68,6 +68,16 @@ def get_meds(route_mapping, route):
     return [str(x) for x in route_mapping[route]]
 
 
+@register.simple_tag
+def date_line(case_detials, time_step=0):
+    import datetime
+    admit = datetime.datetime.fromtimestamp(case_detials[time_step]["min_t"]/1000.0)
+    current = datetime.datetime.fromtimestamp(case_detials[time_step]["max_t"]/1000.0)
+    delta =  current - admit
+    return 'Admitted to the ICU on: ' + admit.strftime("%m/%d") + ' | Current date: ' + current.strftime("%m/%d") + ' | Current ICU day: ' + str(delta.days+1)
+
+
+'''
 # this tag is used #
 @ register.filter(name='date_line')
 def date_line(case_detials, time_step=0):
@@ -76,6 +86,7 @@ def date_line(case_detials, time_step=0):
     current = datetime.datetime.fromtimestamp(case_detials[time_step]["max_t"]/1000.0)
     delta =  current - admit
     return 'Admitted to the ICU on: ' + admit.strftime("%m/%d") + ' | Current date: ' + current.strftime("%m/%d") + ' | Current ICU day: ' + str(delta.days+1)
+'''
 
 # this tag is used #
 @register.filter

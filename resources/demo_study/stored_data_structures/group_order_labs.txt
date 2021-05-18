@@ -1,1 +1,0 @@
-["Blood Gases", "Basic Chemistry", "Other Chemistry", "Fluid Chemistry", "Fluid Differential", "Lipid Chemistry", "Liver Function", "Cardiac Enzymes", "Endocrine Chemistry", "Immunology", "CBC", "Differential", "Blood Smear", "Coags", "Urinalysis", "Urine Toxicology", "Drug Levels", "CSF", "Other"]

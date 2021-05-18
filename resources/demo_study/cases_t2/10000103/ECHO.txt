@@ -1,1 +1,0 @@
-[{"date": "07/05", "text": "REPORT TEXT GOES HERE", "js_time": 1341460800000.0, "upk": 0, "type": "Echocardiographic Report"}]

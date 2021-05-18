@@ -1,1 +1,0 @@
-{"weight": 61.0, "age": 55, "bmi": 22.4, "sex": "F", "race": "n/a **SYNTHETIC DATA**", "height": 165.0, "id": 10000102}

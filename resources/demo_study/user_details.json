@@ -1,1 +1,1 @@
-{"demo_234": {"last_accessed": 88, "cases_assigned": ["10000101", "10000102", "10000103"], "cases_completed": []}, "demo2": {"last_accessed": null, "cases_assigned": [], "cases_completed": []}}
+{"testUser1": {"last_accessed": null, "cases_assigned": ["10000101", "10000102", "10000103"], "cases_completed": []}, "testUser2": {"last_accessed": null, "cases_assigned": ["10000101", "10000102", "10000103"], "cases_completed": []}}

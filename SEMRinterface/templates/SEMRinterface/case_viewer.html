@@ -24,9 +24,10 @@
 <div class="glyphicon glyphicon-refresh" id="loading_new_patient"></div> <!-- this glyphicon blurrs the screen on loading -->
 <div class="container">
 <!-- Introduction popup -->
-	<div id="directions" class="center-div"><h4>New Patient: {{ case_id }}.
-	</h4><h4>{{dict_case_details|date_line}}
-	</h4><h4>Please use the available information to become familiar with this patient.</h4>
+	<div id="directions" class="center-div"><h4>Patient: {{ case_id }}.
+	</h4><h4>{% date_line dict_case_details time_step %}
+	</h4><h4> '{{ instructions }}'
+	</h4>
 		<input id="directions_button" type="button"  value="Okay" onclick="remove_directions()" disabled>
 	</div>
 <!-- end of Introduction popup -->
@@ -46,9 +47,9 @@
 					<div class="chartcolTS" id="time_selector">
 						<script>
 						{% autoescape off %}
-						getchartTS("div[id='time_selector']", {{dict_case_details}});
-						set_case_details({{dict_case_details}});
-						set_case_complete_url('{{study_id}}', '{{user_id}}');
+						set_case_details({{dict_case_details}}, '{{study_id}}', '{{user_id}}', '{{case_id}}', {{time_step}});
+						set_next_step_url();
+						getchartTS("div[id='time_selector']", {{dict_case_details}}, {{time_step}});
 						{% endautoescape %}
 						</script>
 					</div>
@@ -105,8 +106,9 @@
             </div>
             <div class="col-lg-12 micro-vitmedbox scroll-box t-border" id="io_tracking">
                 <div class="lab-group col-md-12" id="IO">
-				    Intake and output not avaliable
-                    <!-- IO chart goes here -->
+                    <div class="charttitlerow"  onclick="remove_vertical_point(true)">
+                       
+                    </div>
                 </div>
 
             </div>
@@ -187,6 +189,7 @@
                     <script>
                     {% autoescape off %}
                     getchartT("div[id='lab-time1{{i}}']");
+					create_selection_screen();
                     {% endautoescape %}
                     </script>
                 </div>
@@ -211,25 +214,15 @@
             </ul>
 
             <div class="contentArea tab-content">
-				<!-- DS_note not included-->
+                <!-- add include statements for note templates here -->
             </div>
 
         </div>
 		<div class="col-lg-12 taskbox scroll-box t-border">
 			<div id="task" class="note task"><br>
-			{% if dict_case_details.0.instruction_set == "familiar" %}
-				Please use the available information to become familiar with this patient.
-			{% elif dict_case_details.0.instruction_set == "prepare" %}
-				Please prepare to present this case at morning rounds.
-			{% elif dict_case_details.0.instruction_set == "present" %}
-				Please present this case to the care team during rounds. Use the audio recorder to capture your presentation.  
-			{% elif dict_case_details.0.instruction_set == "select" %}
-				Please select the information you used when preparing to present this case.
-			{% else %}
-				Instruction_set missing. Please add it to case_viewer.html. 
-			{% endif %}
+			{{ instructions }}
 				<hr>Then click
-				<input id='next_screen_button' type="button" value="continue" onclick="next_step();"></input>
+				<input id='next_screen_button' type="button" value="continue" onclick="link_advance();"></input>
 			</div>
 		</div>
 	</div>

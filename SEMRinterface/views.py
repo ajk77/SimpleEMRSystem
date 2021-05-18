@@ -39,7 +39,6 @@ def select_study(request):
     from SEMRinterface.utils import get_list_study_id
     
     list_study_id = get_list_study_id(dir_resources)
-    list_study_id.remove('demo_study')
 
     template = loader.get_template(os.path.join('SEMRinterface', 'study_selection_screen.html'))
     context_dict = {
@@ -150,9 +149,27 @@ def mark_complete(request):
 
     return HttpResponse(message)  
 
-    
-def case_viewer(request, study_id, user_id, case_id):
+def mark_complete_url(request, study_id, user_id, case_id):
     print(request.path_info)
+    from urllib.parse import urlparse
+
+    dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')   
+    with open(dir_study_user_details) as f:
+        dict_user_2_details = json.load(f)
+    
+    # remove case from completed list #
+    dict_user_2_details[user_id]['cases_completed'].append(case_id)
+    
+    # save user details #
+    with open(dir_study_user_details, 'w') as f:
+        json.dump(dict_user_2_details, f)
+
+    return select_case(request, study_id, user_id)  
+
+    
+def case_viewer(request, study_id, user_id, case_id, time_step=0):
+    print(request.path_info)
+    time_step = int(time_step)
 
     ## load global files ##
     load_dir = os.path.join(dir_resources, study_id)
@@ -169,11 +186,19 @@ def case_viewer(request, study_id, user_id, case_id):
     dict_notes = json.load(open(os.path.join(load_dir, 'note_panel_data.json'), 'r'))
     dict_observations = json.load(open(os.path.join(load_dir, 'observations.json'), 'r'))
 
+
+    ## define user instructions dict ##
+    instructions = {}
+    instructions["familiar"] = "Please use the available information to become familiar with this patient."
+    instructions["select"] = "Please select the information you used when preparing to present this case."
+
     template = loader.get_template('SEMRinterface/case_viewer.html')
     context_dict = {
         'case_id': case_id,
         'user_id': user_id,
         'study_id': study_id,
+        'time_step': time_step,
+        'instructions': instructions[dict_case_2_details[case_id][time_step]["instruction_set"]],
         'dict_case_details': dict_case_2_details[case_id],
         'dict_data_layout': dict_data_layout,
         'dict_med_2_details': dict_med_2_details,

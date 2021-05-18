@@ -1,0 +1,7 @@
+{
+"title_bar": ["id", "age", "sex", "height", "weight", "bmi", "race"],
+"physio_panel_groups": ["Vitals", "Ventilator"],
+"med_panel_groups":["IV", "By_Mouth", "subQ", "IV_Push", "Home_Medication", "Duotube", "Each_Nostril", "SwishandSpit", "Miscellaneous", "Right_Eye", "Both_Eyes", "IVPB", "Topically", "Per_Rectum"],
+"lab_panel_groups": ["Blood_Gases", "Basic_Chemistry", "Other_Chemistry", "Fluid_Chemistry", "Fluid_Differential", "Lipid_Chemistry", "Liver_Function", "Cardiac_Enzymes", "Endocrine_Chemistry", "Immunology", "CBC", "Differential", "Blood_Smear", "Coags", "Urinalysis", "Urine_Toxicology", "Drug_Levels", "CSF", "Other"],
+"note_panel_groups": ["Progress_Note", "HandP", "OP", "ECHO", "RAD", "EKG", "Micro", "Procedures"]
+}

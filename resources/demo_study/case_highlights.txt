@@ -1,3 +1,0 @@
-10000101: BUN,NA,lactuose,metronidazole,PLT,VTHR,VTDIAV,VTRR,VTTEMA,CREAT,K,insulin glargine (Lantus),VTDIAA,cefazolin,clopidogrel,HGB,CO2,VTSO2A,ampicillin-sulbactam
-10000102: BUN,lactuose,PLT,VTHR,VTDIAV,VTRR,K,risperidone,Lactated Ringers,O2VENT,insulin glargine (Lantus),VTDIAA,cefazolin,clopidogrel,HGB,WBC,VTSO2A
-10000103: BUN,NA,PLT,Base solution,VTHR,GLU,VTDIAV,VTRR,VTTEMA,K,CL,PTNF,cefazolin,clopidogrel,HGB,WBC,CO2,VTSO2A
