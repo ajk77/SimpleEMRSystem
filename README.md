@@ -41,7 +41,6 @@ It is strongly recommended that you use a virtual environment.
 4. terminate using ctrl+c
 
 #### Docker
-(update coming soon)
 1. cd into project directory 
 2. enter "docker-compose up"
 3. open web browser to http://127.0.0.1:8000/SEMRinterface/
