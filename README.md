@@ -97,7 +97,7 @@ Version 3.0. For the versions available, see https://github.com/ajk77/SimpleEMRS
 	* Twitter (https://twitter.com/Shyam_Vis)
 * Gregory F Cooper - Doctoral Advisor
 
-##Citation
+## Citation
 King AJ, Calzoni L, Tajgardoon M, Cooper G, Clermont G, Hochheiser H, Visweswaran S. A simple electronic medical record system designed for research. JAMIA Open. 2021 July 31;4(3):ooab040.
 (<https://academic.oup.com/jamiaopen/article/4/3/ooab040/6332673>)
 
