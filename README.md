@@ -97,6 +97,10 @@ Version 3.0. For the versions available, see https://github.com/ajk77/SimpleEMRS
 	* Twitter (https://twitter.com/Shyam_Vis)
 * Gregory F Cooper - Doctoral Advisor
 
+##Citation
+King AJ, Calzoni L, Tajgardoon M, Cooper G, Clermont G, Hochheiser H, Visweswaran S. A simple electronic medical record system designed for research. JAMIA Open. 2021 July 31;4(3):ooab040.
+(<https://academic.oup.com/jamiaopen/article/4/3/ooab040/6332673>)
+
 ## Impact
 This interface has been used in the following studies:
 * King AJ, Cooper GF, Clermont G, Hochheiser H, Hauskrecht M, Sittig DF, Visweswaran S. Leveraging Eye Tracking to 
