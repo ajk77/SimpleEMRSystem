@@ -193,6 +193,7 @@ def case_viewer(request, study_id, user_id, case_id, time_step=0):
     instructions["select"] = "Please select the information you used when preparing to present this case."
 
     template = loader.get_template('SEMRinterface/case_viewer.html')
+    print (dict_notes)
     context_dict = {
         'case_id': case_id,
         'user_id': user_id,

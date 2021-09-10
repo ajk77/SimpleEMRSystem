@@ -161,12 +161,6 @@
 </div>
         </div>
 		<!-- end of Lab panel -->
-		
-		<!-- Add charts -->
-
-		
-		
-		<!-- end of Add charts -->
 
 		<!-- Lower time row --> 
 		{% for i in list_1_2 %}
@@ -197,7 +191,6 @@
         </div>
 		<!-- end of Lower time row --> 
 
-
     </div>
 	<!-- end of Physio, Med, and Lab Panels --> 
 
@@ -206,18 +199,28 @@
         <div class="col-lg-12 notebox scroll-box">
             <ul class="nav nav-tabs nav-tabs-justified">
 			{% for group in dict_data_layout.note_panel_groups %}
-			<li class="nav-track" id="allergies">
-                <a href="#{{group}}" data-toggle="tab"  onclick="remove_vertical_point(true);" class="even-less-pad">{{ group|truncatechars:7 }} <span class="badge">{{ dict_notes.group|length }}</span></a>
-            </li>
+				{% if group in dict_notes %}
+				<li class="nav-track" id="{{group}}tab">
+				{% else %}
+				<li class="nav-track disabled" id="{{group}}tab">
+				{% endif %}
+					<a href="#{{group}}" data-toggle="tab"  onclick="remove_vertical_point(true);" class="even-less-pad">{{ group|truncatechars:7 }} <span class="badge">{% note_count dict_notes group %}</span></a>
+				</li>
+                
 			{% endfor %}
             </ul>
 
             <div class="contentArea tab-content">
-                <!-- add include statements for note templates here -->
+
+			{% for group in dict_notes %} 
+            {% include "SEMRinterface/report_template.html" with report_dict=dict_notes|keyvalue:group div_id=group %}
+            {% endfor %}
+            
             </div>
 
         </div>
 		<div class="col-lg-12 taskbox scroll-box t-border">
+
 			<div id="task" class="note task"><br>
 			{{ instructions }}
 				<hr>Then click

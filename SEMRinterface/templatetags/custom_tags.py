@@ -36,6 +36,14 @@ def get_recent_value(recent, lab):
     else:
         return "Never"
 
+@register.simple_tag
+def note_count(arg_dict, arg_key):
+    if arg_key in arg_dict:
+        count = len(arg_dict[arg_key])
+    else:
+        count = 0
+    return count
+
 
 @register.filter(name="next_lab")
 def next_lab(value, arg):

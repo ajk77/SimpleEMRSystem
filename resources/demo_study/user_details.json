@@ -1,1 +1,1 @@
-{"testUser1": {"last_accessed": null, "cases_assigned": ["10000101", "10000102", "10000103"], "cases_completed": ["10000102"]}, "testUser2": {"last_accessed": null, "cases_assigned": ["10000101", "10000102", "10000103"], "cases_completed": []}}
+{"testUser1": {"last_accessed": null, "cases_assigned": ["10000101", "10000102", "10000103"], "cases_completed": []}, "testUser2": {"last_accessed": null, "cases_assigned": ["10000101", "10000102", "10000103"], "cases_completed": []}}
