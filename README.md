@@ -41,7 +41,6 @@ It is strongly recommended that you use a virtual environment.
 4. terminate using ctrl+c
 
 #### Docker
-(update coming soon)
 1. cd into project directory 
 2. enter "docker-compose up"
 3. open web browser to http://127.0.0.1:8000/SEMRinterface/
@@ -97,6 +96,10 @@ Version 3.0. For the versions available, see https://github.com/ajk77/SimpleEMRS
 	* Website (http://www.thevislab.com/)
 	* Twitter (https://twitter.com/Shyam_Vis)
 * Gregory F Cooper - Doctoral Advisor
+
+## Citation
+King AJ, Calzoni L, Tajgardoon M, Cooper G, Clermont G, Hochheiser H, Visweswaran S. A simple electronic medical record system designed for research. JAMIA Open. 2021 July 31;4(3):ooab040.
+(<https://academic.oup.com/jamiaopen/article/4/3/ooab040/6332673>)
 
 ## Impact
 This interface has been used in the following studies:
