@@ -221,8 +221,17 @@
         </div>
 		<div class="col-lg-12 taskbox scroll-box t-border">
 
+			{% if show_checkboxes %}
+				<script>
+	            {% autoescape off %}
+	            create_selection_screen();
+	            {% endautoescape %}
+	            </script>
+            {% endif %}
+
 			<div id="task" class="note task"><br>
 			{{ instructions }}
+			{{content}}
 				<hr>Then click
 				<input id='next_screen_button' type="button" value="continue" onclick="link_advance();"></input>
 			</div>

@@ -165,8 +165,31 @@ def mark_complete_url(request, study_id, user_id, case_id):
         json.dump(dict_user_2_details, f)
 
     return select_case(request, study_id, user_id)  
-
+'''
+@api_view(['POST'])
+def save_selected_items(request, study_id, user_id, case_id):
+    if request.method == 'POST':
+        tutorial_data = JSONParser().parse(request)
+        print(tutorial_data)
+        return JsonResponse('good', status=status.HTTP_201_CREATED) 
+        return JsonResponse('bad', status=status.HTTP_400_BAD_REQUEST)
     
+
+'''
+def save_selected_items(request, study_id, user_id, case_id):
+    if request.is_ajax():
+        message = "Yes, AJAX!"
+        if request.method == 'POST':
+            selected_ids = json.loads(request.POST.get("selected_ids"))
+            dir_study_stored_results = os.path.join(dir_resources, study_id, 'stored_results.txt')  
+            with open(dir_study_stored_results, 'a+') as f:
+                f.write(json.dumps({"user_id": user_id, "case_id": case_id, "selected_ids": selected_ids}) +'\n')
+    else:
+        message = "Not Ajax"
+    
+    return HttpResponse(message)
+
+@ensure_csrf_cookie    
 def case_viewer(request, study_id, user_id, case_id, time_step=0):
     print(request.path_info)
     time_step = int(time_step)
@@ -193,12 +216,12 @@ def case_viewer(request, study_id, user_id, case_id, time_step=0):
     instructions["select"] = "Please select the information you used when preparing to present this case."
 
     template = loader.get_template('SEMRinterface/case_viewer.html')
-    print (dict_notes)
     context_dict = {
         'case_id': case_id,
         'user_id': user_id,
         'study_id': study_id,
         'time_step': time_step,
+        'show_checkboxes': dict_case_2_details[case_id][time_step]["check_boxes"],
         'instructions': instructions[dict_case_2_details[case_id][time_step]["instruction_set"]],
         'dict_case_details': dict_case_2_details[case_id],
         'dict_data_layout': dict_data_layout,

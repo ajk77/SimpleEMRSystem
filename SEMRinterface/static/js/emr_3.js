@@ -15,9 +15,8 @@ var study_id;
 var user_id;
 var case_id;
 
-
 // Page loading activites //
-$(document).ready(function () {
+$(document).ready(function () { 
     var navHeight = $('.navbar').outerHeight(true) + 10;
     $(document.body).scrollspy({
         target: '.bs-sidebar',
@@ -41,6 +40,23 @@ $(document).ready(function () {
     $('#break_button').removeAttr("disabled");
 
 });
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
 
 // Shows loading screen after navigation buttons have been clicked // 
 function show_loading(){
@@ -72,11 +88,34 @@ function set_next_step_url(){
 	set_case_complete_url();
 	next_step = String(step+1)
 	next_step_url = '/SEMRinterface/' + study_id + '/' +user_id+'/'+case_id + '/' + next_step + '/';	
-	console.log(next_step_url);
 }
 
 // Functionality for the continue button //
 function link_advance(){
+    if (selected_items.length > 0){
+        function get_id_callback(curr_item){
+            selected_ids.push(curr_item.id)
+        }
+
+        var selected_ids = [];
+        selected_items.forEach(get_id_callback);
+        var post_url = '/SEMRinterface/selected_items/' + study_id + '/' +user_id+'/'+case_id + '/';
+        $.ajax({
+            url : post_url,
+            type: 'POST',
+            data: {csrfmiddlewaretoken: csrftoken, selected_ids: JSON.stringify(selected_ids)},
+            dataType: 'json',
+            error: function() {
+                console.log("Error");
+            },
+            success: function() {
+                console.log("OK");
+            }
+        });
+
+        //get_selected_ids(ajax_callback);
+    };
+
 	if (case_details.length-1 > step) {
 		link_press(next_step_url);
 	} else {
@@ -84,6 +123,7 @@ function link_advance(){
 		link_press(case_complete_url);
 	}
 }
+
 
 // link press helper //
 function link_press(curr_url){
@@ -152,20 +192,13 @@ function updateExtremes(){
 
 // highlight chart //
 function highlight(id){
-    var curr = "div[id='"+id+"']";
-    $(curr).css("background-color","#FFC300");//.css("border-style", "solid").css("border-width", "thin");
+    $(id).css("background-color","#FFC300");//.css("border-style", "solid").css("border-width", "thin");
     selected_items.push(id);
-    if (case_difficulty){
-        $('#next_case_button').css("background-color","green");
-    }else{
-        $('#next_case_button').css("background-color","#82E0AA");
-    }
 }
 
 // unhighlight chart //
 function un_highlight(id){
-    var curr = "div[id='"+id+"']";
-    $(curr).css("background-color","#eeeeee");
+    $(id).css("background-color","#eeeeee");
     selected_items.splice(selected_items.indexOf(id), 1);
 }
 
@@ -252,8 +285,7 @@ function remove_vertical_point(display_recent_24){
 
 // used when selection is made
 function activate(id){
-    var curr = 'div[id="' + id + '"]';
-    var child_2 = $(curr).find('.chartcol1');
+    var child_2 = $(id).find('.chartcol1');
     var child_2_html = child_2.html();
     if (child_2_html.length > 1) {
         if (child_2_html.split('-')[1][0] === 'u') {
@@ -269,18 +301,17 @@ function activate(id){
 
 // Create lab chart helper //
 function add_observation_chart(obs_id, observation_details, variable_details, panel_1_groups){
-	if (obs_id == 'VTDIAV') {console.log(observation_details)};
 	/*
 		observation_details is from observations.json
 		variable_details is from variable_details.json
 	*/
 	var chart_container_id = 'chart'+obs_id
 	if (panel_1_groups.includes(variable_details.display_group)) {
-		div_str = '<div class="vitalrow" id="row'+obs_id+'">' 	
+		div_str = '<div class="vitalrow" id="row'+obs_id+'" onclick="activate(row'+obs_id+')">' 	
 	}else if (obs_id == 'IO'){
-		div_str = '<div class="iorow" id="row'+obs_id+'">' 
+		div_str = '<div class="iorow" id="row'+obs_id+'" onclick="activate(row'+obs_id+')">' 
 	} else {
-		div_str = '<div class="chartrow" id="row'+obs_id+'">' 
+		div_str = '<div class="chartrow" id="row'+obs_id+'" onclick="activate(row'+obs_id+')">' 
 	}
 	div_str += '<div class="chartcol1 shower"> </div>'
 	div_str += '<div class="chartcol3" id="'+chart_container_id+'"></div></div>'
@@ -419,7 +450,7 @@ function add_medication_chart(obs_id, medication_details, med_details){
 		med_details is from variable_details.json
 	*/
 	var chart_container_id = 'chart'+obs_id
-	div_str = '<div class="medrow" id="row'+obs_id+'">' 
+	div_str = '<div class="medrow" id="row'+obs_id+'" onclick="activate(row'+obs_id+')">' 
 	div_str += '<div class="chartcol1 shower"> </div>'
 	div_str += '<div class="chartcol3" id="'+chart_container_id+'"></div></div>'
 	$('#'+med_details.med_route).append(div_str);		
