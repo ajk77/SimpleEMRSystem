@@ -25,17 +25,6 @@ along with SimpleEMRSystem.  If not, see <https://www.gnu.org/licenses/>.
 from django.conf.urls import url
 from . import views
 
-# nothing is for home screen
-# \NUM\ is a patient id in demo mode
-# \NUM\NUM\ is patient id and user id (used during labeling study)
-# \NUM\NUM\\NUM\ is patient id, user id, and previous patient id (used during labeling study)
-# \retrain\ will be used later when model building
-# \save_pixelmap\ saves current screen layout
-# \save_input\ saves elemnt selections and linkert scale data
-# \eye_test\NUM\NUM\ is user_id and next patient Id. (always initiated from home screen)
-# end \NUM\NUM\ is user_id and previous patient id. It closes study
-# \load_cases\ is used to load the cases.
-
 urlpatterns = [
     url(r'^$', views.select_study, name='select_study'),
     url(r'^casereset/$', views.case_reset, name='case_reset'),
