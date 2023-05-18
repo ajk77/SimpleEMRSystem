@@ -118,7 +118,7 @@ class a_Medication(models.Model):
 
 
 class a_Micro(models.Model):
-    patientvisitid = models.IntegerField(null=False, db_column='PatientVisitID')
+    patientvisitid = models.IntegerField(primary_key=True, db_column='PatientVisitID')
     date = models.DateTimeField(null=True, db_column='EventDate', blank=True)
     eventid = models.IntegerField(null=False, db_column='EventID')
     eventname = models.CharField(max_length=45, db_column='EventName', blank=True)
@@ -131,7 +131,7 @@ class a_Micro(models.Model):
 
 
 class a_MicroReport(models.Model):
-    patientvisitid = models.IntegerField(null=False, db_column='PatientVisitID')
+    patientvisitid = models.IntegerField(primary_key=True, db_column='PatientVisitID')
     eventid = models.IntegerField(null=False, db_column='EventID')
     accession = models.CharField(max_length=20, db_column='Accession', blank=True)
     text = models.TextField(db_column='MicroReport', blank=True)
@@ -141,7 +141,7 @@ class a_MicroReport(models.Model):
 
 
 class a_Surgical(models.Model):
-    patientvisitid = models.IntegerField(null=False, db_column='PatientVisitID')
+    patientvisitid = models.IntegerField(primary_key=True, db_column='PatientVisitID')
     date = models.IntegerField(null=False, db_column='BegDate')
     primary = models.CharField(max_length=1, db_column='PrimaryProcedure', blank=True)
     procedure = models.CharField(max_length=50, db_column='SurgProcedure', blank=True)
@@ -153,7 +153,7 @@ class a_Surgical(models.Model):
 
 
 class a_Ventilator(models.Model):
-    patientvisitid = models.IntegerField(null=False, db_column='PatientVisitID')
+    patientvisitid = models.IntegerField(primary_key=True, db_column='PatientVisitID')
     date = models.IntegerField(null=False, db_column='EventDate')
     eventname = models.CharField(max_length=20, db_column='EventName', blank=True)
     resultval = models.CharField(max_length=30, db_column='ResultVal', blank=True)

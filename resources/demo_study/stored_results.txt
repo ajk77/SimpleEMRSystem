@@ -1,2 +1,3 @@
 {"user_id": "testUser1", "case_id": "10000102", "selected_ids": ["rowBASEDA","rowPO2V","rowHCO3V","rowmedidx47","rowIO"]}
 {"user_id": "testUser1", "case_id": "10000102", "selected_ids": ["rowBASEEA"]}
+{"user_id": "testUser1", "case_id": "10000101", "selected_ids": ["rowBUN", "rowK", "rowMG"]}
