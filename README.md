@@ -103,8 +103,9 @@ King AJ, Calzoni L, Tajgardoon M, Cooper G, Clermont G, Hochheiser H, Visweswara
 
 ## Impact
 This interface has been used in the following studies:
+* Payne VL, Sattar U, Wright M, Hill E, Butler JM, Macpherson B, Jeppesen A, Del Fiol G, Madaras-Kelly K. Clinician perspectives on how situational context and augmented intelligence design features impact perceived usefulness of sepsis prediction scores embedded within a simulated electronic health record. J Am Med Inform Assoc. 2024; ocae089. (<https://doi.org/10.1093/jamia/ocae089>)
 * King AJ, Cooper GF, Clermont G, Hochheiser H, Hauskrecht M, Sittig DF, Visweswaran S. Leveraging Eye Tracking to 
-Prioritize Relevant Medical Record Data: Comparative Machine Learning Study. J Med Internet Res 2020;22(4):e15876. 
+Prioritize Relevant Medical Record Data: Comparative Machine Learning Study. J Med Internet Res. 2020;22(4):e15876. 
 (<https://www.jmir.org/2020/4/e15876/>)
 * King AJ, Cooper GF, Clermont G, Hochheiser H, Hauskrecht M, Sittig DF, Visweswaran S. Using Machine Learning to 
 Selectively Highlight Patient Information. J Biomed Inform. 2019 Dec 1;100:103327. 
