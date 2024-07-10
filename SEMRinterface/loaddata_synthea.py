@@ -1,38 +1,15 @@
 """
 SEMRinterface/loaddata_synthea.py
-version 3.0
 package github.com/ajk77/SimpleEMRSystem
-Created by AndrewJKing.com|@andrewsjourney
-
-This file is for ETL on a folder of synthea CSV files. 
-
----LICENSE---
-This file is part of SimpleEMRSystem
-
-SimpleEMRSystem is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or 
-any later version.
-
-SimpleEMRSystem is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with SimpleEMRSystem.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
 #from SimpleEMRSystem.utils import *
 
 import os
-import time
 import datetime
 import pickle
 import json
-import unicodedata
-import re
 import shutil
 from dateutil.relativedelta import relativedelta
 from datetime import datetime

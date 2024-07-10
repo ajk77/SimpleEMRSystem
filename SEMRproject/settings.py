@@ -1,6 +1,6 @@
 """
 SEMRproject/settings.py
-version 3.0
+version 2024.1
 package github.com/ajk77/SimpleEMRSystem
 Modified by AndrewJKing.com|@andrewsjourney
 

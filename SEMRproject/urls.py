@@ -1,6 +1,6 @@
 """
 SEMRproject/urls.py
-version 3.0
+version 2024.1
 package github.com/ajk77/SimpleEMRSystem
 Modified by AndrewJKing.com|@andrewsjourney
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with LEMRinterface.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from django.conf.urls import include, url
+from django.urls import include, re_path
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -32,7 +32,7 @@ from django.conf.urls import include, url
 app_name = "SEMRinterface"
 
 urlpatterns = [
-    url(r'^SEMRinterface/', include('SEMRinterface.urls'))
+    re_path(r'^SEMRinterface/', include('SEMRinterface.urls'))
     ]
 
 

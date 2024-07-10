@@ -8,7 +8,7 @@ First, have a look in the screenshots directory to become familiar with the inte
 
 ### Prerequisites
 
-Python 3 or Docker Compose
+Python 3.11 
 
 ### Installing
 
@@ -19,17 +19,6 @@ Python 3 or Docker Compose
 2. cd into project directory
 3. enter "pip install -r requirements.txt"
 
-#### Docker
-
-1. Clone repository 
-
-#### Python installation notes
-It is strongly recommended that you use a virtual environment.
-1. if you do not have virtualenv, enter "pip install virtualenv"
-2. enter "python -m venv __name_of_environment__"
-3. enter "__name_of_environment__/Scripts/activate"
-4. then follow the Python installation instructions shown above
-5. to terminate the virtual environment, enter "deactivate"
 
 ### Deployment
 
@@ -38,13 +27,8 @@ It is strongly recommended that you use a virtual environment.
 1. cd into project directory
 2. enter "python manage.py runserver"
 3. open web browser to http://127.0.0.1:8000/SEMRinterface/
-4. terminate using ctrl+c
+4. terminate using ctrl+break
 
-#### Docker
-1. cd into project directory 
-2. enter "docker-compose up"
-3. open web browser to http://127.0.0.1:8000/SEMRinterface/
-4. terminate using ctrl+c
 
 ### Notes
 
@@ -58,7 +42,7 @@ Two example studies are included in the Simple EMR System repository: demo_study
 
 Included case data can be found at:
 1. https://github.com/ajk77/SimpleEMRSystem/tree/master/resources/synthea_study
-2. https://github.com/ajk77/SimpleEMRSystem/tree/master/resources/demo_study (update coming soon)
+2. https://github.com/ajk77/SimpleEMRSystem/tree/master/resources/demo_study 
 
 ### Importing custom patient data
 To preprocess Synthea cases for display on the Simple EMR System: 
@@ -85,7 +69,7 @@ the EMR (<https://www.ncbi.nlm.nih.gov/pubmed/28815151>)
 
 ## Versioning
 
-Version 3.0. For the versions available, see https://github.com/ajk77/SimpleEMRSystem
+Version 2024.1. For the versions available, see https://github.com/ajk77/SimpleEMRSystem
 
 ## Authors
 
