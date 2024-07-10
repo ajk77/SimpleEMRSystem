@@ -32,6 +32,7 @@ from django.urls import include, re_path
 app_name = "SEMRinterface"
 
 urlpatterns = [
+    re_path(r'^$', include('SEMRinterface.urls')),
     re_path(r'^SEMRinterface/', include('SEMRinterface.urls'))
     ]
 
