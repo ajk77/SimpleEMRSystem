@@ -1,0 +1,282 @@
+{% extends 'SEMRinterface/base.html' %}
+{% load static %}
+
+{% block title %}Welcome - Simple EMR System{% endblock %}
+
+{% block meta_description %}Welcome to the Simple EMR System - A research tool for electronic medical record studies{% endblock %}
+
+{% block extra_css %}
+<style>
+    .welcome-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .welcome-card {
+        background: rgba(255, 255, 255, 0.95);
+        color: #333;
+        border-radius: 15px;
+        padding: 3rem;
+        max-width: 800px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .welcome-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .welcome-subtitle {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+    
+    .welcome-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+    
+    .welcome-step {
+        padding: 1.5rem;
+        border-radius: 10px;
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .welcome-step:hover {
+        border-color: #007bff;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 123, 255, 0.1);
+    }
+    
+    .welcome-step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin: 0 auto 1rem auto;
+    }
+    
+    .welcome-step h3 {
+        color: #007bff;
+        margin-bottom: 0.5rem;
+    }
+    
+    .welcome-step p {
+        color: #666;
+        margin: 0;
+    }
+    
+    .welcome-actions {
+        margin-top: 2rem;
+    }
+    
+    .btn-welcome {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-welcome-primary {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        border: none;
+    }
+    
+    .btn-welcome-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-welcome-secondary {
+        background: transparent;
+        color: #007bff;
+        border: 2px solid #007bff;
+    }
+    
+    .btn-welcome-secondary:hover {
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .welcome-features {
+        margin-top: 3rem;
+        text-align: left;
+    }
+    
+    .welcome-features h4 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .feature-list li {
+        padding: 0.5rem 0;
+        color: #666;
+    }
+    
+    .feature-list li:before {
+        content: "✓";
+        color: #28a745;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    
+    .welcome-footer {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e9ecef;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+        .welcome-card {
+            margin: 1rem;
+            padding: 2rem;
+        }
+        
+        .welcome-title {
+            font-size: 2rem;
+        }
+        
+        .welcome-steps {
+            grid-template-columns: 1fr;
+        }
+        
+        .btn-welcome {
+            display: block;
+            margin: 10px 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="welcome-container">
+    <div class="welcome-card">
+        <h1 class="welcome-title">Simple EMR System</h1>
+        <p class="welcome-subtitle">
+            A rapidly deployable electronic medical record interface for research studies
+        </p>
+        
+        <div class="welcome-steps">
+            <div class="welcome-step">
+                <div class="welcome-step-number">1</div>
+                <h3>Select a Study</h3>
+                <p>Choose from available research studies</p>
+            </div>
+            <div class="welcome-step">
+                <div class="welcome-step-number">2</div>
+                <h3>Choose a User</h3>
+                <p>Select your user profile</p>
+            </div>
+            <div class="welcome-step">
+                <div class="welcome-step-number">3</div>
+                <h3>Review Cases</h3>
+                <p>Examine patient cases and make decisions</p>
+            </div>
+        </div>
+        
+        <div class="welcome-actions">
+            <a href="{% url 'unified_selection' %}" class="btn-welcome btn-welcome-primary">
+                Get Started
+            </a>
+            <button class="btn-welcome btn-welcome-secondary" onclick="startTutorial()">
+                Take Tutorial
+            </button>
+        </div>
+        
+        <div class="welcome-features">
+            <h4>Key Features</h4>
+            <ul class="feature-list">
+                <li>Interactive medical data visualization</li>
+                <li>Multi-study support</li>
+                <li>User management and case assignments</li>
+                <li>Task-based workflow</li>
+                <li>Responsive design</li>
+                <li>Research data collection</li>
+            </ul>
+        </div>
+        
+        <div class="welcome-footer">
+            <p>
+                <strong>Version 2024.2</strong> | 
+                <a href="https://github.com/ajk77/SimpleEMRSystem" target="_blank" rel="noopener">GitHub</a> | 
+                <a href="#" onclick="showHelp()">Help & Support</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script src="{% static 'js/tutorial.js' %}"></script>
+<script>
+function startTutorial() {
+    // Initialize tutorial with custom steps
+    tutorial.init({
+        callbacks: {
+            onStart: function() {
+                console.log('Tutorial started');
+            },
+            onComplete: function() {
+                console.log('Tutorial completed');
+                // Redirect to main interface
+                window.location.href = "{% url 'unified_selection' %}";
+            },
+            onSkip: function() {
+                console.log('Tutorial skipped');
+                // Redirect to main interface
+                window.location.href = "{% url 'unified_selection' %}";
+            }
+        }
+    });
+    
+    // Start the tutorial
+    tutorial.start();
+}
+
+function showHelp() {
+    // Show help modal or redirect to help page
+    alert('Help system coming soon! For now, please refer to the documentation.');
+}
+
+// Auto-start tutorial if URL parameter is present
+if (new URLSearchParams(window.location.search).get('tutorial') === 'true') {
+    startTutorial();
+}
+</script>
+{% endblock %}

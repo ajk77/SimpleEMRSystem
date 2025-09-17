@@ -1,0 +1,254 @@
+{% extends 'SEMRinterface/base.html' %}
+{% load static %}
+
+{% block title %}Study, User & Case Selection - Simple EMR System{% endblock %}
+
+{% block meta_description %}Select a study, user, and case to begin your EMR session{% endblock %}
+
+{% block extra_css %}
+<style>
+    .selection-container {
+        padding-top: 2rem;
+    }
+    
+    .selection-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .step-indicator {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+    
+    .step {
+        display: flex;
+        align-items: center;
+        margin: 0 1rem;
+    }
+    
+    .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #6c757d;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.5rem;
+        font-weight: bold;
+    }
+    
+    .step.active .step-number {
+        background: #007bff;
+    }
+    
+    .step.completed .step-number {
+        background: #28a745;
+    }
+    
+    .step-label {
+        font-weight: 500;
+    }
+    
+    .error-message {
+        color: #dc3545;
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        display: none;
+    }
+    
+    .success-message {
+        color: #155724;
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 4px;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container selection-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <h1 class="display-4">Simple EMR System</h1>
+                <p class="lead">Select a study, user, and case to begin your session</p>
+            </div>
+            
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" id="step-study">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Study</div>
+                </div>
+                <div class="step" id="step-user">
+                    <div class="step-number">2</div>
+                    <div class="step-label">User</div>
+                </div>
+                <div class="step" id="step-case">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Case</div>
+                </div>
+            </div>
+            
+            <!-- Selection Form -->
+            <div class="selection-card">
+                {% include 'SEMRinterface/components/selection_form.html' %}
+            </div>
+            
+            <!-- Messages -->
+            <div class="error-message" id="error-message"></div>
+            <div class="success-message" id="success-message"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script>
+$(document).ready(function() {
+    const apiClient = window.SEMRApi?.apiClient;
+    const utils = window.SEMRUtils;
+    
+    if (!apiClient || !utils) {
+        console.error('Required JavaScript modules not loaded');
+        return;
+    }
+    
+    // Set up CSRF token for AJAX requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRFToken': utils.CookieUtils.get('csrftoken')
+        }
+    });
+    
+    // Update step indicator
+    function updateStepIndicator(activeStep) {
+        $('.step').removeClass('active completed');
+        $('.step').each(function(index) {
+            const stepNumber = index + 1;
+            if (stepNumber < activeStep) {
+                $(this).addClass('completed');
+            } else if (stepNumber === activeStep) {
+                $(this).addClass('active');
+            }
+        });
+    }
+    
+    // Show error message
+    function showError(message) {
+        $('#error-message').text(message).show();
+        $('#success-message').hide();
+    }
+    
+    // Show success message
+    function showSuccess(message) {
+        $('#success-message').text(message).show();
+        $('#error-message').hide();
+    }
+    
+    // Hide messages
+    function hideMessages() {
+        $('#error-message, #success-message').hide();
+    }
+    
+    // Handle study selection
+    $('#study-dropdown').change(function() {
+        const studyId = $(this).val();
+        
+        if (studyId) {
+            hideMessages();
+            updateStepIndicator(2);
+            
+            // Fetch users for the selected study
+            apiClient.getUsers(studyId)
+                .then(function(data) {
+                    if (data.status === 'success') {
+                        $('#user-dropdown').empty().append('<option value="">-- Select User --</option>');
+                        data.users.forEach(user => {
+                            $('#user-dropdown').append(`<option value="${user.id}">${user.name}</option>`);
+                        });
+                        $('#user-selection').show();
+                    } else {
+                        showError(data.message || 'Failed to load users');
+                    }
+                })
+                .catch(function(error) {
+                    utils.ErrorUtils.logError('Study selection', error);
+                    showError('Failed to load users. Please try again.');
+                });
+        } else {
+            $('#user-selection, #case-selection').hide();
+            updateStepIndicator(1);
+        }
+    });
+    
+    // Handle user selection
+    $('#user-dropdown').change(function() {
+        const studyId = $('#study-dropdown').val();
+        const userId = $(this).val();
+        
+        if (userId) {
+            hideMessages();
+            updateStepIndicator(3);
+            
+            // Fetch cases for the selected user
+            apiClient.getCases(studyId, userId)
+                .then(function(data) {
+                    if (data.status === 'success') {
+                        // Populate assigned cases
+                        $('#assigned-cases').empty();
+                        data.cases.assigned.forEach(caseId => {
+                            const caseItem = $(`
+                                <div class="case-item">
+                                    <a href="case_viewer/?study_id=${studyId}&user_id=${userId}&case_id=${caseId}">
+                                        ${caseId}
+                                    </a>
+                                </div>
+                            `);
+                            $('#assigned-cases').append(caseItem);
+                        });
+                        
+                        // Populate completed cases
+                        $('#completed-cases').empty();
+                        data.cases.completed.forEach(caseId => {
+                            const caseItem = $(`
+                                <div class="case-item completed">
+                                    <span>${caseId}</span>
+                                </div>
+                            `);
+                            $('#completed-cases').append(caseItem);
+                        });
+                        
+                        $('#case-selection').show();
+                    } else {
+                        showError(data.message || 'Failed to load cases');
+                    }
+                })
+                .catch(function(error) {
+                    utils.ErrorUtils.logError('User selection', error);
+                    showError('Failed to load cases. Please try again.');
+                });
+        } else {
+            $('#case-selection').hide();
+            updateStepIndicator(2);
+        }
+    });
+    
+    // Initialize with step 1
+    updateStepIndicator(1);
+});
+</script>
+{% endblock %}

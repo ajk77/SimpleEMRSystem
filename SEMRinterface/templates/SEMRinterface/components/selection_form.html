@@ -1,0 +1,100 @@
+{% load static %}
+
+<!-- Selection Form Component -->
+<div class="selection-form">
+    <form method="post" id="selection-form">
+        {% csrf_token %}
+        <input type="hidden" name="type" id="form-type" value="">
+        
+        <!-- Study Selection -->
+        <div class="form-group" id="study-selection">
+            <label for="study-dropdown" class="form-label">Select a Study</label>
+            <select id="study-dropdown" name="study_id" class="form-control" required>
+                <option value="">-- Select Study --</option>
+                {% for study in studies %}
+                    <option value="{{ study }}">{{ study }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- User Selection -->
+        <div class="form-group" id="user-selection" style="display: none;">
+            <label for="user-dropdown" class="form-label">Select a User</label>
+            <select id="user-dropdown" name="user_id" class="form-control">
+                <option value="">-- Select User --</option>
+            </select>
+        </div>
+
+        <!-- Case Selection -->
+        <div id="case-selection" style="display: none;">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Assigned Cases</h4>
+                    <div id="assigned-cases" class="case-list"></div>
+                </div>
+                <div class="col-md-6">
+                    <h4>Completed Cases</h4>
+                    <div id="completed-cases" class="case-list"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Selection Form Styles -->
+<style>
+.selection-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.case-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 1rem;
+    background: #f8f9fa;
+}
+
+.case-item {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.case-item:hover {
+    background: #e9ecef;
+    border-color: #007bff;
+}
+
+.case-item a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.case-item.completed {
+    opacity: 0.6;
+    background: #f8f9fa;
+}
+
+.case-item.completed a {
+    pointer-events: none;
+}
+</style>

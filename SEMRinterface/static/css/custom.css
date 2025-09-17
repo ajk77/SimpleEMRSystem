@@ -1,0 +1,203 @@
+/* Refactored custom.css */
+
+body {
+    padding-top: 50px !important;
+}
+
+.container {
+    min-width: 100%;
+}
+
+/* Layout and scrolling */
+.scroll-box {
+    padding-right: 0;
+    padding-left: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.labbox, .medbox, .vitmedbox {
+    height: 88vh;
+}
+
+.half-vitmedbox {
+    height: 70vh;
+}
+
+.micro-vitmedbox {
+    height: 18vh;
+}
+
+.notebox {
+    height: 70vh;
+}
+
+.taskbox {
+    height: 25vh;
+    background: rgba(81, 245, 235, 0.8);
+}
+
+.notetaskbox {
+    height: 95vh;
+}
+
+.t-border {
+    border-top: solid;
+}
+
+/* Lab group styling */
+.lab-group {
+    border: 1px solid #888;
+    background: #fbfbfb;
+    padding: 0;
+}
+
+/* Chart rows */
+.chartrow, .vitalrow, .iorow, .medrow {
+    border-radius: 10px;
+    background: #dfdfdf;
+    margin: 6px;
+    padding: 5px;
+}
+
+.chartrow {
+    width: 22%;
+    float: left;
+}
+
+.vitalrow, .iorow, .medrow {
+    width: 90%;
+    margin-left: 14px;
+}
+
+/* Time pane styling */
+.timepane {
+    padding-right: 15px;
+    padding-left: 0;
+    background: #808080;
+}
+
+.timerow, .vit-timerow, .io-timerow {
+    background: #808080;
+    color: #fff;
+    margin-left: 14px;
+    margin-right: 14px;
+    float: left;
+}
+
+.timerow {
+    width: 20%;
+}
+
+.vit-timerow {
+    width: 90%;
+}
+
+.io-timerow {
+    width: 80%;
+}
+
+/* Navbar */
+.navbar-text {
+    font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.navbar-nav > li > a, .navbar-nav > li {
+    font-weight: bold;
+}
+
+/* Buttons */
+.n-button {
+    width: 75%;
+    text-align: left;
+    background-color: #e7e7e7;
+}
+
+.v-button {
+    background-color: #f5f5dc;
+    color: black;
+}
+
+.m-button {
+    width: 20%;
+    background-color: #e7e7e7;
+}
+
+/* Text styles */
+.red-text {
+    color: darkred;
+    font-weight: bold;
+}
+
+p.thick {
+    font-weight: 900 !important;
+}
+
+/* Chart columns */
+.chartcol1, .chartcol2, .chartcol3, .chartcolfull, .chartcolTS {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.chartcol1 {
+    width: 65%;
+    margin: 0 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.chartcol2 {
+    width: 25%;
+}
+
+.chartcol3 {
+    width: 100%;
+    margin: 5px;
+}
+
+.chartcolfull {
+    width: 100%;
+    background: white;
+    text-align: center;
+}
+
+.chartcolTS {
+    width: 15%;
+    margin: 5px 0;
+}
+
+/* Loading overlay */
+#loading_new_patient {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(192, 192, 192, 0.5);
+    z-index: 100;
+}
+
+/* Centered modal */
+.center-div {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 800px;
+    height: 150px;
+    background-color: #fff;
+    text-align: center;
+    border-radius: 3px;
+    border: solid;
+    z-index: 100;
+    padding: 10px;
+}

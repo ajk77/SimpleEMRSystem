@@ -1,0 +1,41 @@
+{% load static %}
+
+<!-- Loading Component -->
+<div id="loading_new_patient" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <p class="loading-text">Loading...</p>
+    </div>
+</div>
+
+<!-- Loading Styles -->
+<style>
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(192, 192, 192, 0.8);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-spinner {
+    text-align: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-text {
+    margin-top: 1rem;
+    color: #666;
+    font-size: 1.1rem;
+}
+</style>

@@ -51,24 +51,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-'''
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': config['default_NAME'],  # Or path to database file if using sqlite3.
-        'USER': config['default_USER'],  # Not used with sqlite3.
-        'PASSWORD': config['default_PASSWORD'],  # Not used with sqlite3.
-        'HOST': config['default_HOST'],  # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': config['default_PORT'],  # Set to empty string for default. Not used with sqlite3.
-    },
-    'remote': {
-        'ENGINE': 'django.db.backends.mysql',   # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': config['remote_NAME'],          # Or path to database file if using sqlite3.
-        'USER': config['remote_USER'],          # Not used with sqlite3.
-        'PASSWORD': config['remote_PASSWORD'],  # Not used with sqlite3.
-        'HOST': config['remote_HOST'],          # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': config['remote_PORT'],          # Set to empty string for default. Not used with sqlite3.
-    }
-'''
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.4/ref/settings/#allowed-hosts
@@ -180,11 +162,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'SEMRinterface'
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'SEMRinterface',
+    'django.contrib.admin',
+    'django.contrib.admindocs',
 )
 
 # A sample logging configuration. The only tangible logging

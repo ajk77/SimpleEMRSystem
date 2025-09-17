@@ -23,23 +23,15 @@ You should have received a copy of the GNU General Public License
 along with LEMRinterface.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from django.urls import include, re_path
-
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.urls import include, path
+from django.contrib import admin
 
 app_name = "SEMRinterface"
 
 urlpatterns = [
-    re_path(r'^$', include('SEMRinterface.urls')),
-    re_path(r'^SEMRinterface/', include('SEMRinterface.urls'))
-    ]
+    path("admin/", admin.site.urls),
+    path("", include("SEMRinterface.urls")),  # Redirects the root URL to SEMRinterface
+    path("SEMRinterface/", include("SEMRinterface.urls")),  # Additional base URL for the app
+]
 
-
-# Uncomment the admin/doc line below to enable admin documentation:
-# url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-# Uncomment the next line to enable the admin:
-# url(r'^admin/', include(admin.site.urls)),
 

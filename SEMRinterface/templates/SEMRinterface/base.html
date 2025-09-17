@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Simple EMR System - A rapidly deployable EMR interface for research studies{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}EMR, Electronic Medical Records, Research, Healthcare{% endblock %}">
+    <meta name="author" content="SimpleEMRSystem">
+    
+    <title>{% block title %}Simple EMR System{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'S.ico' %}" type="image/x-icon">
+    
+    <!-- CSS Dependencies -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+    
+    <!-- Additional CSS -->
+    {% block extra_css %}{% endblock %}
+    
+    <!-- JavaScript Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    
+    <!-- Core JavaScript Modules -->
+    <script src="{% static 'js/core/utils.js' %}"></script>
+    <script src="{% static 'js/core/api.js' %}"></script>
+    <script src="{% static 'js/modules/emr-core.js' %}"></script>
+    <script src="{% static 'js/modules/charts.js' %}"></script>
+    <script src="{% static 'js/modules/tasks.js' %}"></script>
+    
+    <!-- Additional JavaScript -->
+    {% block extra_js %}{% endblock %}
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading_new_patient" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <p class="loading-text">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    {% block navigation %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'unified_selection' %}">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                Simple EMR System
+            </a>
+            
+            {% block nav_items %}{% endblock %}
+            
+            <div class="navbar-nav ml-auto">
+                {% block nav_actions %}{% endblock %}
+            </div>
+        </div>
+    </nav>
+    {% endblock %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% block footer %}
+    <footer class="footer bg-light mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="text-muted">
+                        &copy; {% now "Y" %} Simple EMR System. 
+                        <a href="https://github.com/ajk77/SimpleEMRSystem" target="_blank" rel="noopener">
+                            View on GitHub
+                        </a>
+                    </p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p class="text-muted">
+                        Version 2024.1 | 
+                        <a href="#" data-toggle="modal" data-target="#aboutModal">About</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <!-- About Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aboutModalLabel">About Simple EMR System</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>The Simple EMR System is a rapidly deployable and customizable EMR user interface for laboratory-based research studies.</p>
+                    <p>It provides an intuitive interface for healthcare professionals to review patient cases and make informed decisions based on available medical data.</p>
+                    <h6>Features:</h6>
+                    <ul>
+                        <li>Multi-study support</li>
+                        <li>User management and case assignments</li>
+                        <li>Interactive medical data visualization</li>
+                        <li>Task-based workflow</li>
+                        <li>Responsive design</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Page-specific JavaScript -->
+    {% block page_js %}{% endblock %}
+</body>
+</html>

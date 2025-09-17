@@ -1,0 +1,340 @@
+{% extends 'SEMRinterface/base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}Case Viewer - {{ case_id }} - Simple EMR System{% endblock %}
+
+{% block meta_description %}View and interact with medical case data{% endblock %}
+
+{% block extra_css %}
+<style>
+    .case-viewer-container {
+        padding-top: 2rem;
+    }
+    
+    .demographics-bar {
+        background: #343a40;
+        color: white;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+    
+    .demographics-bar .navbar-text {
+        margin-right: 1rem;
+        font-weight: 500;
+    }
+    
+    .panel-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+    
+    .panel-header {
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+    }
+    
+    .panel-header:hover {
+        background: #e9ecef;
+    }
+    
+    .panel-content {
+        padding: 1rem;
+        display: none;
+    }
+    
+    .panel-content.active {
+        display: block;
+    }
+    
+    .chart-container {
+        height: 300px;
+        margin: 1rem 0;
+    }
+    
+    .note-tabs {
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 1rem;
+    }
+    
+    .note-tab {
+        padding: 0.5rem 1rem;
+        border: 1px solid transparent;
+        border-bottom: none;
+        background: none;
+        cursor: pointer;
+        margin-right: 0.25rem;
+    }
+    
+    .note-tab.active {
+        background: white;
+        border-color: #dee2e6;
+        border-bottom-color: white;
+    }
+    
+    .note-content {
+        padding: 1rem;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-top: none;
+        min-height: 200px;
+    }
+    
+    .task-panel {
+        background: #e3f2fd;
+        border: 1px solid #2196f3;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .highlight {
+        background-color: #fff3cd !important;
+        border-color: #ffeaa7 !important;
+    }
+    
+    .scroll-box {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+</style>
+{% endblock %}
+
+{% block nav_items %}
+<li class="nav-item">
+    <span class="navbar-text">Study: {{ study_id }}</span>
+</li>
+<li class="nav-item">
+    <span class="navbar-text">User: {{ user_id }}</span>
+</li>
+<li class="nav-item">
+    <span class="navbar-text">Case: {{ case_id }}</span>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid case-viewer-container">
+    <!-- Demographics Bar -->
+    <div class="demographics-bar">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div id="demographics">
+                    <!-- Demographics will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="col-md-4 text-right">
+                <span id="selectedTime" class="glyphicon glyphicon-option-vertical"></span>
+                <span class="navbar-text">Selector:</span>
+                <div id="time_selector" class="chartcolTS"></div>
+                <span id="selectedTimes" class="navbar-text"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content Panels -->
+        <div class="col-lg-8">
+            <div class="scroll-box">
+                <!-- Physiological Panels -->
+                <div class="panel-container" id="physio-panels">
+                    <div class="panel-header" onclick="togglePanel('physio-panels')">
+                        Physiological Data
+                    </div>
+                    <div class="panel-content" id="physio-content">
+                        <!-- Physiological data will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Medication Panels -->
+                <div class="panel-container" id="med-panels">
+                    <div class="panel-header" onclick="togglePanel('med-panels')">
+                        Medications
+                    </div>
+                    <div class="panel-content" id="med-content">
+                        <!-- Medication data will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Lab Panels -->
+                <div class="panel-container" id="lab-panels">
+                    <div class="panel-header" onclick="togglePanel('lab-panels')">
+                        Laboratory Results
+                    </div>
+                    <div class="panel-content" id="lab-content">
+                        <!-- Lab data will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes and Tasks Panel -->
+        <div class="col-lg-4">
+            <div class="scroll-box">
+                <!-- Notes Section -->
+                <div class="panel-container">
+                    <div class="panel-header" onclick="togglePanel('notes-panel')">
+                        Clinical Notes
+                    </div>
+                    <div class="panel-content active" id="notes-panel">
+                        <div class="note-tabs" id="note-tabs">
+                            <!-- Note tabs will be populated by JavaScript -->
+                        </div>
+                        <div class="note-content" id="note-content">
+                            <!-- Note content will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Section -->
+                <div class="task-panel">
+                    <div id="task-instructions">
+                        <!-- Task instructions will be populated by JavaScript -->
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <button id="next_screen_button" class="btn btn-primary btn-lg">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include loading component -->
+{% include 'SEMRinterface/components/loading.html' %}
+{% endblock %}
+
+{% block page_js %}
+<script>
+$(document).ready(function() {
+    const queryParams = new URLSearchParams(window.location.search);
+    const studyId = queryParams.get('study_id');
+    const userId = queryParams.get('user_id');
+    const caseId = queryParams.get('case_id');
+
+    if (!studyId || !userId || !caseId) {
+        alert('Missing required parameters.');
+        return;
+    }
+
+    const apiClient = window.SEMRApi?.apiClient;
+    const emrCore = window.EMRCore?.emrCore;
+    const utils = window.SEMRUtils;
+
+    if (!apiClient || !emrCore || !utils) {
+        console.error('Required JavaScript modules not loaded');
+        return;
+    }
+
+    // Set up loading indicators
+    $(document).ajaxStart(function() {
+        utils.DOMUtils.show('loading_new_patient');
+    }).ajaxStop(function() {
+        utils.DOMUtils.hide('loading_new_patient');
+    });
+
+    // Fetch case data
+    apiClient.getCaseData(studyId, caseId)
+        .then(function(response) {
+            if (response.status === 'success') {
+                updateCaseViewer(response.case_data);
+            } else {
+                alert(response.message || 'Failed to load case data');
+            }
+        })
+        .catch(function(error) {
+            utils.ErrorUtils.logError('Case data fetch', error);
+            alert('Failed to fetch case data. Please try again.');
+        });
+
+    // Update case viewer with data
+    function updateCaseViewer(caseData) {
+        // Populate demographics
+        const demographics = caseData.demographics || {};
+        const demographicsHtml = Object.entries(demographics)
+            .map(([key, value]) => `<span class="navbar-text">${key}: ${value}</span>`)
+            .join(' ');
+        $('#demographics').html(demographicsHtml);
+
+        // Populate panels
+        populatePanels('#physio-content', caseData.physio_data || []);
+        populatePanels('#med-content', caseData.med_data || []);
+        populatePanels('#lab-content', caseData.lab_data || []);
+
+        // Populate notes
+        populateNotes(caseData.notes || {});
+
+        // Set task instructions
+        $('#task-instructions').html(caseData.instructions || 'No instructions available');
+
+        // Initialize EMR core
+        emrCore.initializePage(caseData, studyId, userId, caseId, 0);
+    }
+
+    // Populate data panels
+    function populatePanels(containerId, panelData) {
+        $(containerId).empty();
+        panelData.forEach(group => {
+            const panelHtml = `
+                <div class="lab-group">
+                    <div class="charttitlerow" onclick="remove_vertical_point(true)">
+                        ${group.name}
+                    </div>
+                    <div class="chart-container" id="chart-${group.id}"></div>
+                </div>
+            `;
+            $(containerId).append(panelHtml);
+        });
+    }
+
+    // Populate notes
+    function populateNotes(notes) {
+        $('#note-tabs, #note-content').empty();
+        Object.entries(notes).forEach(([groupName, content], index) => {
+            const tabId = `note-${index}`;
+            $('#note-tabs').append(`
+                <button class="note-tab ${index === 0 ? 'active' : ''}" 
+                        onclick="switchNoteTab('${tabId}')">
+                    ${groupName}
+                </button>
+            `);
+            $('#note-content').append(`
+                <div id="${tabId}" class="note-content ${index === 0 ? 'active' : ''}" 
+                     style="display: ${index === 0 ? 'block' : 'none'}">
+                    ${content}
+                </div>
+            `);
+        });
+    }
+
+    // Panel toggle function
+    window.togglePanel = function(panelId) {
+        const content = $(`#${panelId} .panel-content`);
+        content.toggleClass('active');
+    };
+
+    // Note tab switching
+    window.switchNoteTab = function(tabId) {
+        $('.note-tab').removeClass('active');
+        $('.note-content').removeClass('active').hide();
+        $(`#${tabId}`).addClass('active').show();
+        $(`[onclick="switchNoteTab('${tabId}')"]`).addClass('active');
+    };
+
+    // Placeholder for chart functions
+    window.remove_vertical_point = function(remove) {
+        console.log('Remove vertical point:', remove);
+        // Implementation for removing vertical plot lines
+    };
+});
+</script>
+{% endblock %}
