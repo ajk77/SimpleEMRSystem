@@ -27,11 +27,10 @@ class User(AbstractUser):
     cases_assigned = models.JSONField(default=list, help_text="List of assigned case IDs")
     cases_completed = models.JSONField(default=list, help_text="List of completed case IDs")
 
-    # Override username field to use user_id
+    # Override username field to use study:user_id format for global uniqueness
     username = models.CharField(
         _('username'),
         max_length=150,
-        unique=True,
         help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
         validators=[],
         error_messages={
@@ -39,6 +38,9 @@ class User(AbstractUser):
         },
         default='',
     )
+
+    USERNAME_FIELD = 'user_id'
+    REQUIRED_FIELDS = []
 
     class Meta:
         indexes = [

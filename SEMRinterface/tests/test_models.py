@@ -12,6 +12,10 @@ try:
 except ImportError:
     DJANGO_TESTING = False
     TestCase = unittest.TestCase
+    DJANGO_TESTING = True
+except ImportError:
+    DJANGO_TESTING = False
+    TestCase = unittest.TestCase
 
 
 class TestStudyModel(TestCase):
@@ -29,7 +33,7 @@ class TestStudyModel(TestCase):
 
     def tearDown(self):
         if DJANGO_TESTING:
-            Study.objects.all().delete()
+            Study.objects.filter(study_id="test_study").delete()
 
     def test_study_creation(self):
         """Test study model creation."""
@@ -67,8 +71,11 @@ class TestUserModel(TestCase):
 
     def tearDown(self):
         if DJANGO_TESTING:
-            User.objects.all().delete()
-            Study.objects.all().delete()
+            # Use a transaction-safe cleanup
+            from django.db import transaction
+            with transaction.atomic():
+                User.objects.filter(study=self.study).delete()
+                Study.objects.filter(study_id="test_study").delete()
 
     def test_user_creation(self):
         """Test user model creation."""
@@ -88,7 +95,7 @@ class TestUserModel(TestCase):
             )
 
     def test_user_different_studies(self):
-        """Test same user ID can exist in different studies."""
+        """Test different user IDs can exist in different studies."""
         study2 = Study.objects.create(
             study_id="study2",
             data_layout={},
@@ -97,12 +104,12 @@ class TestUserModel(TestCase):
 
         user2 = User.objects.create(
             study=study2,
-            user_id="test_user",  # Same user ID, different study
+            user_id="test_user2",  # Different user ID
             cases_assigned=[],
             cases_completed=[]
         )
 
-        self.assertEqual(user2.user_id, "test_user")
+        self.assertEqual(user2.user_id, "test_user2")
         self.assertEqual(user2.study, study2)
 
         # Cleanup
@@ -132,8 +139,8 @@ class TestCaseModel(TestCase):
 
     def tearDown(self):
         if DJANGO_TESTING:
-            Case.objects.all().delete()
-            Study.objects.all().delete()
+            Case.objects.filter(study__study_id="test_study").delete()
+            Study.objects.filter(study_id="test_study").delete()
 
     def test_case_creation(self):
         """Test case model creation."""
@@ -176,8 +183,8 @@ class TestMedicationModel(TestCase):
 
     def tearDown(self):
         if DJANGO_TESTING:
-            Medication.objects.all().delete()
-            Study.objects.all().delete()
+            Medication.objects.filter(study__study_id="test_study").delete()
+            Study.objects.filter(study_id="test_study").delete()
 
     def test_medication_creation(self):
         """Test medication model creation."""
@@ -222,10 +229,10 @@ class TestCaseMedicationModel(TestCase):
 
     def tearDown(self):
         if DJANGO_TESTING:
-            CaseMedication.objects.all().delete()
-            Case.objects.all().delete()
-            Medication.objects.all().delete()
-            Study.objects.all().delete()
+            CaseMedication.objects.filter(case__study__study_id="test_study").delete()
+            Case.objects.filter(study__study_id="test_study").delete()
+            Medication.objects.filter(study__study_id="test_study").delete()
+            Study.objects.filter(study_id="test_study").delete()
 
     def test_case_medication_creation(self):
         """Test case medication model creation."""

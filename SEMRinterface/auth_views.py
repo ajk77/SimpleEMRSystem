@@ -20,16 +20,16 @@ def login_view(request):
         return redirect('welcome')
 
     if request.method == 'POST':
-        username = request.POST.get('username')
+        user_id = request.POST.get('user_id')
         password = request.POST.get('password')
         study_id = request.POST.get('study_id')
 
-        if not all([username, password, study_id]):
+        if not all([user_id, password, study_id]):
             messages.error(request, _('Please fill in all fields.'))
             return redirect('login')
 
         # Authenticate user
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=user_id, password=password)
 
         if user is not None:
             # Check if user belongs to the selected study
