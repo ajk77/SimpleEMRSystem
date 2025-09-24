@@ -1,0 +1,110 @@
+[
+  {
+    "model": "SEMRinterface.study",
+    "pk": 1,
+    "fields": {
+      "study_id": "demo_study",
+      "data_layout": {
+        "panels": [
+          {
+            "name": "Demographics",
+            "type": "demographics"
+          },
+          {
+            "name": "Observations",
+            "type": "observations"
+          }
+        ]
+      },
+      "variable_details": {
+        "age": {
+          "display_name": "Age",
+          "type": "number",
+          "unit": "years"
+        },
+        "gender": {
+          "display_name": "Gender",
+          "type": "categorical",
+          "values": ["M", "F"]
+        }
+      }
+    }
+  },
+  {
+    "model": "SEMRinterface.user",
+    "pk": 1,
+    "fields": {
+      "study": 1,
+      "user_id": "researcher1",
+      "last_accessed": "2024-01-15T10:30:00Z",
+      "cases_assigned": ["10000101", "10000102"],
+      "cases_completed": ["10000101"]
+    }
+  },
+  {
+    "model": "SEMRinterface.case",
+    "pk": 1,
+    "fields": {
+      "study": 1,
+      "case_id": "10000101",
+      "demographics": {
+        "age": 45,
+        "gender": "M",
+        "race": "White"
+      },
+      "observations": [
+        {
+          "time": "2023-01-01T08:00:00Z",
+          "heart_rate": 72,
+          "blood_pressure": "120/80",
+          "temperature": 98.6
+        }
+      ],
+      "note_panel_data": {
+        "notes": "Patient presented with chest pain. EKG normal.",
+        "assessment": "Stable angina",
+        "plan": "Continue current medications"
+      },
+      "case_details": {
+        "summary": "45-year-old male with chest pain",
+        "priority": "medium",
+        "category": "cardiology"
+      }
+    }
+  },
+  {
+    "model": "SEMRinterface.medication",
+    "pk": 1,
+    "fields": {
+      "study": 1,
+      "medidx": "ASPIRIN",
+      "display_name": "Aspirin",
+      "original_name": "aspirin",
+      "med_route": "PO"
+    }
+  },
+  {
+    "model": "SEMRinterface.casemedication",
+    "pk": 1,
+    "fields": {
+      "case": 1,
+      "medication": 1,
+      "med_data": [
+        {
+          "time": "2023-01-01T08:00:00Z",
+          "dose": "81mg",
+          "route": "PO"
+        },
+        {
+          "time": "2023-01-01T20:00:00Z",
+          "dose": "81mg",
+          "route": "PO"
+        }
+      ],
+      "y_axis_ranges": {
+        "min": 0,
+        "max": 500
+      }
+    }
+  }
+]

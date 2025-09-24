@@ -34,20 +34,137 @@ All API responses follow this standard format:
 
 ## Endpoints
 
-### Study Management
+### Welcome Page
 
 #### GET `/`
-Get the unified selection interface.
+Get the welcome/tutorial page.
 
 **Response:**
-- Renders the study selection page with available studies
+- Renders the welcome page with tutorial information
 
-#### POST `/`
-Handle study, user, and case selection requests.
+### Study/User/Case Selection
 
-**Request Body:**
+#### GET `/select/`
+Get the unified selection interface for studies, users, and cases.
+
+**Response:**
+- Renders the selection page with available studies
+
+#### POST `/select/`
+Handle selection requests for studies, users, and cases.
+
+**Request Body (fetch_users):**
 ```json
 {
+    "type": "fetch_users",
+    "study_id": "study_identifier"
+}
+```
+
+**Request Body (fetch_cases):**
+```json
+{
+    "type": "fetch_cases", 
+    "study_id": "study_identifier",
+    "user_id": "user_identifier"
+}
+```
+
+**Response:**
+```json
+{
+    "status": "success",
+    "users": [{"id": "user1", "name": "User 1"}, ...] // for fetch_users
+}
+```
+```json
+{
+    "status": "success", 
+    "cases": {"assigned": [...], "completed": [...]} // for fetch_cases
+}
+```
+
+### Case Viewer
+
+#### GET `/case_viewer/`
+Render the case viewer interface.
+
+**Query Parameters:**
+- `study_id`: Study identifier
+- `user_id`: User identifier  
+- `case_id`: Case identifier
+
+**Response:**
+- Renders the case viewer page for the specified case
+
+### Case Data API
+
+#### GET `/api/get_case_data/`
+Get case data for the EMR interface.
+
+**Query Parameters:**
+- `study_id`: Study identifier
+- `case_id`: Case identifier
+
+**Response:**
+```json
+{
+    "status": "success",
+    "case_data": {
+        "demographics": {...},
+        "medications": {...},
+        "notes": {...},
+        "observations": {...}
+    }
+}
+```
+
+### Health Monitoring
+
+#### GET `/health/`
+Simple health check endpoint.
+
+**Response:**
+- Plain text "OK" if system is healthy
+
+#### GET `/api/health/`
+JSON health check endpoint.
+
+**Response:**
+```json
+{
+    "status": "healthy",
+    "timestamp": "2024-01-01T00:00:00Z"
+}
+```
+
+#### GET `/api/info/`
+System information endpoint.
+
+**Response:**
+```json
+{
+    "version": "2024.2",
+    "django_version": "5.0.7",
+    "python_version": "3.11.x",
+    "database": "SQLite"
+}
+```
+
+#### GET `/api/quickstart/`
+Quick start guide endpoint.
+
+**Response:**
+```json
+{
+    "steps": [
+        "1. Install dependencies...",
+        "2. Run migrations...",
+        "3. Load data...",
+        "4. Start server..."
+    ]
+}
+```
     "type": "fetch_users|fetch_cases",
     "study_id": "string",
     "user_id": "string" // Required for fetch_cases

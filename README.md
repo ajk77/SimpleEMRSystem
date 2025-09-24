@@ -1,6 +1,20 @@
 # Simple EMR System
 
-This code can be used for Electronic Medical Record Research.
+This code can be used for Electronic Medical Recor### Importing custom patient data
+
+To import custom data:
+
+1. Prepare your data in the same JSON format as the sample studies
+2. Place data files in `resources/<study_id>/` directory
+3. Run `python manage.py load_resources` to populate the database
+
+The system expects the following structure:
+- `data_layout.json`: Defines the UI layout
+- `variable_details.json`: Variable metadata
+- `med_details.json`: Medication information
+- `user_details.json`: User assignments
+- `case_details.json`: Case metadata
+- `cases_all/<case_id>/`: Individual case data files
 
 ## Getting Started
 
@@ -8,16 +22,38 @@ First, have a look in the screenshots directory to become familiar with the inte
 
 ### Prerequisites
 
-Python 3.11 
+Python 3.8+ 
 
 ### Installing
 
+#### Automated Installation
 
-#### Python 
+**Windows:**
+```bash
+install.bat
+```
+
+**Linux/Mac:**
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+**Interactive Setup:**
+```python
+python setup_wizard.py
+```
+
+#### Manual Installation
 
 1. Clone repository
 2. cd into project directory
-3. enter "pip install -r requirements.txt"
+3. Create virtual environment: `python -m venv semr_env`
+4. Activate environment: `semr_env\Scripts\activate` (Windows) or `source semr_env/bin/activate` (Linux/Mac)
+5. Install dependencies: `pip install -r requirements.txt`
+6. Run database migrations: `python manage.py migrate`
+7. Load sample data: `python manage.py load_resources`
+8. Start server: `python manage.py runserver`
 
 
 ### Deployment
@@ -25,9 +61,14 @@ Python 3.11
 ##### Python 
 
 1. cd into project directory
-2. enter "python manage.py runserver"
-3. open web browser to http://127.0.0.1:8000/SEMRinterface/
-4. terminate using ctrl+break
+2. Activate virtual environment
+3. Run `python manage.py runserver`
+4. Open web browser to http://127.0.0.1:8000/SEMRinterface/
+5. Terminate using ctrl+break
+
+### Database Setup
+
+The system uses SQLite database for data storage. The `load_resources` management command populates the database with sample studies and cases from the `resources/` directory.
 
 
 ### Notes
@@ -69,7 +110,7 @@ the EMR (<https://www.ncbi.nlm.nih.gov/pubmed/28815151>)
 
 ## Versioning
 
-Version 2024.1. For the versions available, see https://github.com/ajk77/SimpleEMRSystem
+Version 2024.2. For the versions available, see https://github.com/ajk77/SimpleEMRSystem
 
 ## Authors
 
@@ -77,7 +118,7 @@ Version 2024.1. For the versions available, see https://github.com/ajk77/SimpleE
 	* Website (https://www.andrewjking.com/)
 	* Twitter (https://twitter.com/andrewsjourney)
 * Shyam Visweswaran - Principal Investigator
-	* Website (http://www.thevislab.com/)
+	* Website (http://www.thevisweswaran.com/)
 	* Twitter (https://twitter.com/Shyam_Vis)
 * Gregory F Cooper - Doctoral Advisor
 

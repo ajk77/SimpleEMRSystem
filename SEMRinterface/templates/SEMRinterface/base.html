@@ -10,6 +10,7 @@
     <title>{% block title %}Simple EMR System{% endblock %}</title>
     
     <!-- Favicon -->
+    {% load static %}
     <link rel="icon" href="{% static 'S.ico' %}" type="image/x-icon">
     
     <!-- CSS Dependencies -->
@@ -56,6 +57,24 @@
             {% block nav_items %}{% endblock %}
             
             <div class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    <span class="navbar-text mr-3">
+                        Welcome, {{ user.get_full_name|default:user.username }}!
+                    </span>
+                    <a class="nav-link" href="{% url 'profile' %}">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                        Profile
+                    </a>
+                    <a class="nav-link" href="{% url 'logout' %}">
+                        <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                        Logout
+                    </a>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}">
+                        <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                        Login
+                    </a>
+                {% endif %}
                 {% block nav_actions %}{% endblock %}
             </div>
         </div>

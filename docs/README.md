@@ -44,12 +44,17 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-4. Start the development server:
+4. Load sample data from the resources directory:
+```bash
+python manage.py load_resources
+```
+
+5. Start the development server:
 ```bash
 python manage.py runserver
 ```
 
-5. Open your browser and navigate to `http://localhost:8000`
+6. Open your browser and navigate to `http://localhost:8000/SEMRinterface`
 
 ## Architecture
 

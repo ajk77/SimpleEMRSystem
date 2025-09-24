@@ -6,36 +6,53 @@ Version 2024.2 focuses on making the Simple EMR System accessible to users with 
 
 ## 🚀 Key Improvements
 
-### 1. One-Click Installation
+### 1. Database Migration
+- **Migration from Files to Database**: Complete migration from JSON file-based storage to SQLite database
+- **Django ORM Integration**: All data access now uses Django models with proper relationships
+- **Data Loading Automation**: `load_resources` management command for automated database population
+- **Backward Compatibility**: Services layer maintains API compatibility with fallback to file system
+
+### 2. One-Click Installation
 - **Windows**: `install.bat` - Automated installation script
 - **Linux/Mac**: `install.sh` - Automated installation script  
 - **Python**: `setup_wizard.py` - Interactive setup wizard
 - **Docker**: Enhanced `docker-compose.yml` with health checks
 
-### 2. Interactive Tutorial System
+### 3. Enhanced Data Models
+- **Optimized Database Schema**: Added proper indexes and primary keys
+- **Comprehensive Relationships**: Foreign key relationships between Study, User, Case, Medication entities
+- **JSON Field Usage**: Flexible storage for complex medical data structures
+- **Data Integrity**: Unique constraints and validation
+
+### 4. Improved Management Commands
+- **Enhanced load_resources**: Better error handling, progress reporting, and reset functionality
+- **Modular Design**: Separated loading logic into focused methods
+- **Robust Error Recovery**: Graceful handling of missing files and invalid data
+
+### 5. Interactive Tutorial System
 - Step-by-step guided tour of the interface
 - Contextual help and tooltips
 - Skip/restart functionality
 - Mobile-responsive design
 
-### 3. Enhanced User Experience
+### 6. Enhanced User Experience
 - Welcome screen with getting started guide
 - Improved error messages and validation
 - Better loading indicators
 - Responsive design improvements
 
-### 4. Health Monitoring
+### 7. Health Monitoring
 - System health check endpoints (`/health/`, `/api/health/`)
 - System information API (`/api/info/`)
 - Quick start guide API (`/api/quickstart/`)
 - Performance monitoring
 
-### 5. Comprehensive Documentation
+### 8. Comprehensive Documentation
 - User manual with step-by-step instructions
-- Video tutorial scripts
-- API documentation
-- Developer guide
+- API documentation with current endpoints
+- Developer guide with architecture details
 - Troubleshooting guide
+- Updated README with database setup instructions
 
 ## 📁 New Files Added
 

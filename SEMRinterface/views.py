@@ -10,6 +10,9 @@ from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.utils.translation import gettext as _
 import logging
 from .services import (
     get_study_ids,
@@ -24,11 +27,64 @@ logger = logging.getLogger(__name__)
 
 def welcome_view(request: HttpRequest) -> HttpResponse:
     """Welcome page with tutorial and getting started information."""
-    return render(request, 'SEMRinterface/welcome.html')
+    if request.user.is_authenticated:
+        return render(request, 'SEMRinterface/welcome.html')
+    else:
+        # Redirect to login if not authenticated
+        from django.shortcuts import redirect
+        return redirect('login')
 
 
+@login_required
 @require_http_methods(["GET", "POST"])
 def unified_selection_view(request: HttpRequest) -> HttpResponse:
+    """Render or respond with selection data for studies, users, and cases.
+
+    GET
+        Renders the unified selection template populated with available
+        studies discovered from the resources directory.
+    POST
+        Expects a `type` form value to indicate the intent and returns a
+        JSON response:
+        - type=fetch_users: requires `study_id`; returns available users
+        - type=fetch_cases: requires `study_id` and `user_id`; returns case
+          assignments for the user
+    """
+    if request.method == 'GET':
+        studies = get_study_ids()
+        context = {'studies': studies}
+        return render(request, 'SEMRinterface/unified_selection_new.html', context)
+
+    if request.method == 'POST':
+        request_type = request.POST.get('type')
+        study_id = request.POST.get('study_id')
+        user_id = request.POST.get('user_id', None)
+
+        # Verify user has access to the requested study
+        if study_id and request.user.study.study_id != study_id:
+            return JsonResponse({
+                'status': 'error',
+                'message': _('You do not have access to this study.')
+            }, status=403)
+
+        if request_type == 'fetch_users':
+            user_details = get_user_details(study_id)
+            if user_details:
+                users = [{'id': uid, 'name': details.get('name', uid)} for uid, details in user_details.items()]
+                return JsonResponse({'status': 'success', 'users': users})
+            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=404)
+
+        if request_type == 'fetch_cases':
+            case_assignments = get_case_assignments(study_id, user_id)
+            if case_assignments:
+                cases = {
+                    'assigned': case_assignments.get('cases_assigned', []),
+                    'completed': case_assignments.get('cases_completed', []),
+                }
+                return JsonResponse({'status': 'success', 'cases': cases})
+            return JsonResponse({'status': 'error', 'message': 'No cases found'}, status=404)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
     """Render or respond with selection data for studies, users, and cases.
 
     GET
@@ -72,6 +128,7 @@ def unified_selection_view(request: HttpRequest) -> HttpResponse:
 
 @csrf_exempt
 @require_http_methods(["GET"])
+@login_required
 def get_case_data(request: HttpRequest) -> JsonResponse:
     """Return case data payloads for the client via JSON.
 
@@ -95,6 +152,7 @@ def get_case_data(request: HttpRequest) -> JsonResponse:
 
 @csrf_exempt
 @require_http_methods(["GET"])
+@login_required
 def case_viewer(request: HttpRequest) -> HttpResponse:
     """Render the case viewer for a given study, user, and case.
 

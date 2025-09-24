@@ -60,6 +60,16 @@ if errorlevel 1 (
     exit /b 1
 )
 
+REM Load resources into database
+echo.
+echo Loading resources into database...
+python manage.py load_resources
+if errorlevel 1 (
+    echo ERROR: Failed to load resources
+    pause
+    exit /b 1
+)
+
 REM Create superuser (optional)
 echo.
 echo Would you like to create an admin user? (y/n)

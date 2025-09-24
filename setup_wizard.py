@@ -70,6 +70,19 @@ def setup_database():
         print(f"ERROR: Failed to setup database: {e}")
         return False
 
+def load_resources():
+    """Load resources into database if they exist"""
+    resources_dir = Path('resources')
+    if resources_dir.exists() and any(resources_dir.iterdir()):
+        print("Loading existing resources into database...")
+        try:
+            execute_from_command_line(['manage.py', 'load_resources'])
+            print("✓ Resources loaded into database")
+        except Exception as e:
+            print(f"ERROR: Failed to load resources: {e}")
+    else:
+        print("No existing resources found - you can add them later")
+
 def create_resources_directory():
     """Create resources directory if it doesn't exist"""
     resources_dir = Path('resources')
@@ -205,6 +218,9 @@ def main():
     # Set up database
     if not setup_database():
         sys.exit(1)
+    
+    # Load resources
+    load_resources()
     
     # Create resources directory
     create_resources_directory()

@@ -65,6 +65,15 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Load resources into database
+echo
+echo "Loading resources into database..."
+python manage.py load_resources
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to load resources"
+    exit 1
+fi
+
 # Create superuser (optional)
 echo
 read -p "Would you like to create an admin user? (y/n): " create_admin

@@ -20,13 +20,21 @@ unit test.
 import os
 import json
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any, Tuple
+from datetime import datetime
+
 try:
     from django.conf import settings  # type: ignore
+    from django.utils.dateparse import parse_datetime as django_parse_datetime
+    from .models import Study, User, Case, Medication, CaseMedication, StoredResult, CaseSelection
+    DJANGO_AVAILABLE = True
 except Exception:  # pragma: no cover - fallback for non-Django contexts
     class _SettingsFallback:
         BASE_DIR = os.getcwd()
     settings = _SettingsFallback()
+    Study = User = Case = Medication = CaseMedication = StoredResult = CaseSelection = None
+    django_parse_datetime = None
+    DJANGO_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -80,8 +88,11 @@ def get_study_ids(resources_dir: str = RESOURCES_DIR) -> List[str]:
     Returns
     -------
     list[str]
-        Directory names found in `resources_dir`.
+        Study IDs from database or filesystem.
     """
+    if DJANGO_AVAILABLE and Study:
+        return list(Study.objects.values_list('study_id', flat=True))
+    # Fallback to file system
     if not os.path.exists(resources_dir):
         return []
     return [
@@ -89,8 +100,43 @@ def get_study_ids(resources_dir: str = RESOURCES_DIR) -> List[str]:
         if os.path.isdir(os.path.join(resources_dir, item))
     ]
 
-def get_user_details(study_id: str, resources_dir: str = RESOURCES_DIR) -> Optional[Dict]:
-    """Load the `user_details.json` mapping for a study.
+
+def _get_study_or_none(study_id: str) -> Optional[Any]:
+    """Get study object or None if not found."""
+    if not DJANGO_AVAILABLE or not Study:
+        return None
+    try:
+        return Study.objects.get(study_id=study_id)
+    except Study.DoesNotExist:
+        return None
+
+
+def _parse_datetime_value(value: Any) -> Optional[datetime]:
+    """Parse various datetime formats into datetime object."""
+    if value is None:
+        return None
+
+    if isinstance(value, str) and django_parse_datetime:
+        parsed = django_parse_datetime(value)
+        return parsed
+
+    if isinstance(value, (int, float)):
+        import datetime
+        return datetime.datetime.fromtimestamp(value / 1000)
+
+    return None
+
+
+def _serialize_user_details(user: Any) -> Dict[str, Any]:
+    """Convert User model instance to dictionary format."""
+    return {
+        'last_accessed': user.last_accessed.isoformat() if user.last_accessed else None,
+        'cases_assigned': user.cases_assigned,
+        'cases_completed': user.cases_completed,
+    }
+
+def get_user_details(study_id: str, resources_dir: str = RESOURCES_DIR) -> Optional[Dict[str, Dict[str, Any]]]:
+    """Load the user details mapping for a study.
 
     Parameters
     ----------
@@ -104,26 +150,75 @@ def get_user_details(study_id: str, resources_dir: str = RESOURCES_DIR) -> Optio
     dict | None
         Mapping of user_id -> assignment details, if present.
     """
+    if DJANGO_AVAILABLE and Study and User:
+        study = _get_study_or_none(study_id)
+        if study:
+            users = User.objects.filter(study=study)
+            return {user.user_id: _serialize_user_details(user) for user in users}
+        return None
+
+    # Fallback to file system
     user_details_path = os.path.join(resources_dir, study_id, 'user_details.json')
     logger.debug("Loading user details for study '%s' from %s", study_id, user_details_path)
     return load_json(user_details_path)
 
-def get_case_assignments(study_id: str, user_id: str, resources_dir: str = RESOURCES_DIR) -> Optional[Dict]:
+def get_case_assignments(study_id: str, user_id: str, resources_dir: str = RESOURCES_DIR) -> Optional[Dict[str, Any]]:
     """Return assignment details for `user_id` within `study_id`.
 
-    Returns the structure stored under the user key in `user_details.json`,
+    Returns the structure stored under the user key in user details,
     typically containing keys like `cases_assigned` and `cases_completed`.
     """
+    if DJANGO_AVAILABLE and Study and User:
+        study = _get_study_or_none(study_id)
+        if study:
+            try:
+                user = User.objects.get(study=study, user_id=user_id)
+                return _serialize_user_details(user)
+            except User.DoesNotExist:
+                return None
+        return None
+
+    # Fallback to file system
     user_details = get_user_details(study_id, resources_dir)
     if user_details and user_id in user_details:
         return user_details[user_id]
     return None
 
-def update_case_assignments(study_id: str, user_id: str, new_details: Dict, resources_dir: str = RESOURCES_DIR) -> bool:
+def update_case_assignments(study_id: str, user_id: str, new_details: Dict[str, Any], resources_dir: str = RESOURCES_DIR) -> bool:
     """Merge `new_details` into a user's assignment record and persist.
 
     Returns True on success, False if the study or user does not exist.
     """
+    if DJANGO_AVAILABLE and Study and User:
+        study = _get_study_or_none(study_id)
+        if not study:
+            return False
+
+        try:
+            user = User.objects.get(study=study, user_id=user_id)
+            _update_user_from_details(user, new_details)
+            user.save()
+            return True
+        except User.DoesNotExist:
+            return False
+
+    # Fallback to file system
+    return _update_user_details_file(study_id, user_id, new_details, resources_dir)
+
+
+def _update_user_from_details(user: Any, new_details: Dict[str, Any]) -> None:
+    """Update User model instance from details dictionary."""
+    for key, value in new_details.items():
+        if key == 'last_accessed':
+            user.last_accessed = _parse_datetime_value(value)
+        elif key == 'cases_assigned':
+            user.cases_assigned = value
+        elif key == 'cases_completed':
+            user.cases_completed = value
+
+
+def _update_user_details_file(study_id: str, user_id: str, new_details: Dict[str, Any], resources_dir: str) -> bool:
+    """Update user details in JSON file."""
     user_details_path = os.path.join(resources_dir, study_id, 'user_details.json')
     user_details = load_json(user_details_path)
     if not user_details or user_id not in user_details:
@@ -134,10 +229,18 @@ def update_case_assignments(study_id: str, user_id: str, new_details: Dict, reso
     return True
 
 def load_case_details(study_id: str, case_id: str, resources_dir: str = RESOURCES_DIR) -> Optional[Dict]:
-    """Return the entry for `case_id` from `case_details.json`.
+    """Return the entry for `case_id` from case details.
 
-    Raises FileNotFoundError if the file or case entry is missing.
+    Raises FileNotFoundError if the case is missing.
     """
+    if Study and Case:
+        try:
+            study = Study.objects.get(study_id=study_id)
+            case = Case.objects.get(study=study, case_id=case_id)
+            return case.case_details
+        except (Study.DoesNotExist, Case.DoesNotExist):
+            raise FileNotFoundError(f"Case '{case_id}' not found in study '{study_id}'")
+    # Fallback
     case_details_path = os.path.join(resources_dir, study_id, 'case_details.json')
     case_details = load_json(case_details_path)
     if not case_details:
@@ -149,9 +252,17 @@ def load_case_details(study_id: str, case_id: str, resources_dir: str = RESOURCE
 def save_case_selection(study_id: str, user_id: str, case_id: str, resources_dir: str = RESOURCES_DIR) -> bool:
     """Append `case_id` to the list of selections for `user_id` within a study.
 
-    A flat line-delimited JSON log is written to `case_selections.json`.
+    Saves to database.
     Returns True on success.
     """
+    if Study and CaseSelection:
+        try:
+            study = Study.objects.get(study_id=study_id)
+            CaseSelection.objects.get_or_create(study=study, user_id=user_id, case_id=case_id)
+            return True
+        except Study.DoesNotExist:
+            return False
+    # Fallback
     selection_path = os.path.join(resources_dir, study_id, 'case_selections.json')
     selections = load_json(selection_path) or {}
 
@@ -170,6 +281,17 @@ def mark_case_complete(study_id: str, user_id: str, case_id: str, resources_dir:
     Returns True when the case was recorded as completed; False when the
     user or study mapping could not be found.
     """
+    if Study and User:
+        try:
+            study = Study.objects.get(study_id=study_id)
+            user = User.objects.get(study=study, user_id=user_id)
+            if case_id not in user.cases_completed:
+                user.cases_completed.append(case_id)
+                user.save()
+            return True
+        except (Study.DoesNotExist, User.DoesNotExist):
+            return False
+    # Fallback
     user_details_path = os.path.join(resources_dir, study_id, 'user_details.json')
     user_details = load_json(user_details_path)
     if not user_details or user_id not in user_details:
@@ -190,6 +312,18 @@ def reset_case(study_id: str, user_id: str, case_id: str, resources_dir: str = R
 
     Returns True if a removal occurred; False otherwise.
     """
+    if Study and User:
+        try:
+            study = Study.objects.get(study_id=study_id)
+            user = User.objects.get(study=study, user_id=user_id)
+            if case_id in user.cases_completed:
+                user.cases_completed.remove(case_id)
+                user.save()
+                return True
+            return False
+        except (Study.DoesNotExist, User.DoesNotExist):
+            return False
+    # Fallback
     user_details_path = os.path.join(resources_dir, study_id, 'user_details.json')
     user_details = load_json(user_details_path)
     if not user_details or user_id not in user_details:
@@ -202,11 +336,23 @@ def reset_case(study_id: str, user_id: str, case_id: str, resources_dir: str = R
     return False
 
 def save_selected_items(study_id: str, user_id: str, case_id: str, selected_items: List[str], resources_dir: str = RESOURCES_DIR) -> bool:
-    """Append a line with the user's selected items for a case to a log.
+    """Save the user's selected items for a case.
 
-    The log file is `stored_results.txt`, one JSON object per line for
-    easy downstream parsing.
+    Saves to database.
     """
+    if Study and StoredResult:
+        try:
+            study = Study.objects.get(study_id=study_id)
+            StoredResult.objects.create(
+                study=study,
+                user_id=user_id,
+                case_id=case_id,
+                selected_items=selected_items
+            )
+            return True
+        except Study.DoesNotExist:
+            return False
+    # Fallback
     stored_results_path = os.path.join(resources_dir, study_id, 'stored_results.txt')
     try:
         with open(stored_results_path, 'a') as file:
@@ -219,7 +365,7 @@ def save_selected_items(study_id: str, user_id: str, case_id: str, selected_item
     except IOError:
         return False
 
-def get_case_files(study_id: str, case_id: str, resources_dir: str = RESOURCES_DIR) -> Optional[Dict]:
+def get_case_files(study_id: str, case_id: str, resources_dir: str = RESOURCES_DIR) -> Optional[Dict[str, Any]]:
     """Load the core JSON files for a specific case.
 
     Returns a mapping with keys: `demographics`, `medications`, `notes`,
@@ -228,8 +374,48 @@ def get_case_files(study_id: str, case_id: str, resources_dir: str = RESOURCES_D
     Returns
     -------
     dict | None
-        Mapping of payloads if the case directory exists; otherwise None.
+        Mapping of payloads if the case exists; otherwise None.
     """
+    if DJANGO_AVAILABLE and Study and Case:
+        return _get_case_files_from_db(study_id, case_id)
+
+    # Fallback to file system
+    return _get_case_files_from_filesystem(study_id, case_id, resources_dir)
+
+
+def _get_case_files_from_db(study_id: str, case_id: str) -> Optional[Dict[str, Any]]:
+    """Load case files from database."""
+    study = _get_study_or_none(study_id)
+    if not study:
+        return None
+
+    try:
+        case = Case.objects.get(study=study, case_id=case_id)
+        medications = _get_case_medications_from_db(case)
+        return {
+            "demographics": case.demographics,
+            "medications": medications,
+            "notes": case.note_panel_data,
+            "observations": case.observations,
+        }
+    except Case.DoesNotExist:
+        return None
+
+
+def _get_case_medications_from_db(case: Any) -> Dict[str, Any]:
+    """Get medications for a case from database."""
+    medications = {}
+    for case_med in CaseMedication.objects.filter(case=case).select_related('medication'):
+        medications[case_med.medication.medidx] = {
+            'display_text': case_med.medication.display_name,
+            'med_data': case_med.med_data,
+            'y_axis_ranges': case_med.y_axis_ranges
+        }
+    return medications
+
+
+def _get_case_files_from_filesystem(study_id: str, case_id: str, resources_dir: str) -> Optional[Dict[str, Any]]:
+    """Load case files from filesystem."""
     case_dir = os.path.join(resources_dir, study_id, 'cases_all', case_id)
     if not os.path.exists(case_dir):
         raise FileNotFoundError(f"Case directory not found at {case_dir}")
