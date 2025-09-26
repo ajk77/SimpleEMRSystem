@@ -115,6 +115,65 @@ def change_password_view(request):
     })
 
 
+def register_view(request):
+    """Handle user registration."""
+    if request.user.is_authenticated:
+        return redirect('welcome')
+
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        study_id = request.POST.get('study_id')
+
+        if not all([user_id, password, confirm_password, study_id]):
+            messages.error(request, _('Please fill in all required fields.'))
+            return redirect('register')
+
+        if password != confirm_password:
+            messages.error(request, _('Passwords do not match.'))
+            return redirect('register')
+
+        if len(password) < 8:
+            messages.error(request, _('Password must be at least 8 characters long.'))
+            return redirect('register')
+
+        try:
+            from .models import Study, User
+            study = Study.objects.get(study_id=study_id)
+        except Study.DoesNotExist:
+            messages.error(request, _('Selected study does not exist.'))
+            return redirect('register')
+
+        # Check if user_id already exists
+        if User.objects.filter(user_id=user_id).exists():
+            messages.error(request, _('A user with this User ID already exists.'))
+            return redirect('register')
+
+        # Create the user
+        try:
+            user = User.objects.create_user(
+                user_id=user_id,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                study=study
+            )
+            messages.success(request, _('Account created successfully! You can now log in.'))
+            return redirect('login')
+        except Exception as e:
+            messages.error(request, _('Error creating account. Please try again.'))
+            return redirect('register')
+
+    # GET request - show registration form
+    studies = get_study_ids()
+    return render(request, 'SEMRinterface/register.html', {
+        'studies': studies
+    })
+
+
 @login_required
 def study_selection_view(request):
     """Show available studies for the logged-in user."""

@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.hashers import make_password
+from django.apps import apps
 from django.utils.translation import gettext_lazy as _
 import json
 
@@ -16,6 +18,39 @@ class Study(models.Model):
 
     def __str__(self):
         return self.study_id
+
+
+class CustomUserManager(UserManager):
+    """Custom user manager that uses user_id instead of username."""
+
+    def _create_user(self, user_id, email=None, password=None, **extra_fields):
+        """Create and save a user with the given user_id, email and password."""
+        if not user_id:
+            raise ValueError('The user_id must be set')
+        if not password:
+            raise ValueError('The password must be set')
+        email = self.normalize_email(email)
+        # Lookup the real model class from the global app registry so this
+        # manager method can be used in migrations. This is fine because
+        # managers are by definition working on the model they're attached to.
+        GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.model_name)
+        user_id = GlobalUserModel.normalize_username(user_id)
+        user = self.model(user_id=user_id, email=email, **extra_fields)
+        user.password = make_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, user_id, email=None, password=None, **extra_fields):
+        """Create a superuser with user_id instead of username."""
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(user_id, email, password, **extra_fields)
 
 
 class User(AbstractUser):
@@ -38,6 +73,8 @@ class User(AbstractUser):
         },
         default='',
     )
+
+    objects = CustomUserManager()
 
     USERNAME_FIELD = 'user_id'
     REQUIRED_FIELDS = []
