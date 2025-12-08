@@ -1,6 +1,8 @@
 # Simple EMR System
 
-This code can be used for Electronic Medical Recor### Importing custom patient data
+This code can be used for Electronic Medical Record
+
+### Importing custom patient data
 
 To import custom data:
 
