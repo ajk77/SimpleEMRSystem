@@ -12,7 +12,6 @@ from . import views, auth_views, health_check
 urlpatterns = [
     # Authentication URLs
     path('login/', auth_views.login_view, name='login'),
-    path('register/', auth_views.register_view, name='register'),
     path('logout/', auth_views.logout_view, name='logout'),
     path('profile/', auth_views.profile_view, name='profile'),
     path('change-password/', auth_views.change_password_view, name='change_password'),

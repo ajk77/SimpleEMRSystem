@@ -26,7 +26,7 @@ class Command(BaseCommand):
             Study.objects.all().delete()
             self.stdout.write(self.style.SUCCESS('Existing data cleared.'))
 
-        study_ids = get_study_ids(RESOURCES_DIR, initial_load=True)
+        study_ids = get_study_ids(RESOURCES_DIR)
         if not study_ids:
             self.stdout.write(self.style.WARNING('No studies found in resources directory.'))
             return
@@ -69,7 +69,7 @@ class Command(BaseCommand):
 
     def _load_users(self, study, study_id, resources_dir):
         """Load users for a study."""
-        user_details = get_user_details(study_id, resources_dir, initial_load=True)
+        user_details = get_user_details(study_id, resources_dir)
         if not user_details:
             self.stdout.write('  No user details found')
             return
@@ -95,25 +95,11 @@ class Command(BaseCommand):
                 except Exception as e:
                     self.stdout.write(f'    Warning: Could not parse last_accessed for user {user_id}: {e}')
 
-            # Check if user already exists
-            user, created = User.objects.get_or_create(
+            User.objects.get_or_create(
+                study=study,
                 user_id=user_id,
-                defaults={
-                    'study': study,
-                    'password': 'password123',  # Default password for loaded users
-                    **defaults
-                }
+                defaults=defaults
             )
-            
-            if created:
-                self.stdout.write(f'    Created user: {user_id}')
-            else:
-                # Update existing user with study and other data
-                user.study = study
-                for key, value in defaults.items():
-                    setattr(user, key, value)
-                user.save()
-                self.stdout.write(f'    Updated user: {user_id}')
 
     def _load_medications(self, study, study_id, resources_dir):
         """Load medications for a study."""

@@ -77,7 +77,7 @@ def save_json(data: Dict, file_path: str) -> None:
     with open(file_path, 'w') as file:
         json.dump(data, file, indent=4)
 
-def get_study_ids(resources_dir: str = RESOURCES_DIR, initial_load: bool = False) -> List[str]:
+def get_study_ids(resources_dir: str = RESOURCES_DIR) -> List[str]:
     """List available study identifiers.
 
     Parameters
@@ -90,7 +90,7 @@ def get_study_ids(resources_dir: str = RESOURCES_DIR, initial_load: bool = False
     list[str]
         Study IDs from database or filesystem.
     """
-    if DJANGO_AVAILABLE and Study and not initial_load:
+    if DJANGO_AVAILABLE and Study:
         return list(Study.objects.values_list('study_id', flat=True))
     # Fallback to file system
     if not os.path.exists(resources_dir):
@@ -135,7 +135,7 @@ def _serialize_user_details(user: Any) -> Dict[str, Any]:
         'cases_completed': user.cases_completed,
     }
 
-def get_user_details(study_id: str, resources_dir: str = RESOURCES_DIR, initial_load: bool = False) -> Optional[Dict[str, Dict[str, Any]]]:
+def get_user_details(study_id: str, resources_dir: str = RESOURCES_DIR) -> Optional[Dict[str, Dict[str, Any]]]:
     """Load the user details mapping for a study.
 
     Parameters
@@ -150,7 +150,7 @@ def get_user_details(study_id: str, resources_dir: str = RESOURCES_DIR, initial_
     dict | None
         Mapping of user_id -> assignment details, if present.
     """
-    if DJANGO_AVAILABLE and Study and User and not initial_load:
+    if DJANGO_AVAILABLE and Study and User:
         study = _get_study_or_none(study_id)
         if study:
             users = User.objects.filter(study=study)
