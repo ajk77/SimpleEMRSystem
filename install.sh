@@ -34,18 +34,29 @@ fi
 
 echo
 echo "Creating virtual environment..."
-python3 -m venv semr_env
+# Recreate if a leftover semr_env was built with an older Python (e.g. 3.9).
+# `venv` without --clear reuses the existing interpreter.
+python3 -m venv --clear semr_env
+
+VENV_PY="$(pwd)/semr_env/bin/python"
+echo "Virtualenv Python:"
+"$VENV_PY" --version
+if ! "$VENV_PY" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)'; then
+    echo "ERROR: semr_env is not Python 3.10+"
+    echo "Delete the semr_env folder and rerun, using a 3.10+ python3."
+    exit 1
+fi
 
 echo "Activating virtual environment..."
 # shellcheck disable=SC1091
 source semr_env/bin/activate
 
 echo "Upgrading pip..."
-python -m pip install --upgrade pip
+"$VENV_PY" -m pip install --upgrade pip
 
 echo
 echo "Installing dependencies..."
-if ! python -m pip install -r requirements.txt; then
+if ! "$VENV_PY" -m pip install -r requirements.txt; then
     echo "ERROR: Failed to install dependencies"
     echo "See the pip output above."
     exit 1
@@ -53,17 +64,17 @@ fi
 
 echo
 echo "Setting up database..."
-python manage.py migrate
+"$VENV_PY" manage.py migrate
 
 echo
 echo "Loading resources into database..."
-python manage.py load_resources
+"$VENV_PY" manage.py load_resources
 
 echo
 read -p "Would you like to create an admin user? (y/n): " create_admin
 if [[ $create_admin == "y" || $create_admin == "Y" ]]; then
     echo "Creating admin user..."
-    python manage.py createsuperuser
+    "$VENV_PY" manage.py createsuperuser
 fi
 
 if [ ! -d "resources" ]; then
@@ -83,4 +94,4 @@ echo "Open your browser to: http://127.0.0.1:8000"
 echo "Press Ctrl+C to stop the server"
 echo
 read -p "Press Enter to start the server..."
-python manage.py runserver
+"$VENV_PY" manage.py runserver

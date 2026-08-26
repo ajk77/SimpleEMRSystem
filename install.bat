@@ -18,14 +18,10 @@ if errorlevel 1 (
 echo Python found. Checking version...
 python --version
 
-REM Check Python version
-for /f "tokens=2" %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
-echo Python version: %PYTHON_VERSION%
-
-REM Create virtual environment
+REM Create virtual environment (recreate if leftover from another Python)
 echo.
 echo Creating virtual environment...
-python -m venv semr_env
+python -m venv --clear semr_env
 if errorlevel 1 (
     echo ERROR: Failed to create virtual environment
     pause
@@ -35,6 +31,9 @@ if errorlevel 1 (
 REM Activate virtual environment
 echo Activating virtual environment...
 call semr_env\Scripts\activate.bat
+
+echo Virtualenv Python:
+python --version
 
 REM Upgrade pip
 echo Upgrading pip...
