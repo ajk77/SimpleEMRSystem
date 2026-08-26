@@ -18,8 +18,8 @@ def generate_secret_key():
 
 def check_python_version():
     """Check if Python version is compatible"""
-    if sys.version_info < (3, 8):
-        print("ERROR: Python 3.8 or higher is required")
+    if sys.version_info < (3, 10):
+        print("ERROR: Python 3.10 or higher is required")
         print(f"Current version: {sys.version}")
         return False
     return True

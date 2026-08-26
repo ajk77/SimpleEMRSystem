@@ -24,7 +24,7 @@ First, have a look in the screenshots directory to become familiar with the inte
 
 ### Prerequisites
 
-Python 3.8+ 
+Python 3.10+ 
 
 ### Installing
 
