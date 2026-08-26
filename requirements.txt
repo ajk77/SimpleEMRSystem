@@ -1,4 +1,5 @@
-Django==5.0.7
-python_dateutil==2.9.0.post0
-requests==2.31.0
-Pillow==10.1.0
+# Django 5.2 LTS supports Python 3.10–3.14 (Homebrew on macOS is 3.13+).
+# Pillow and requests were unused; Pillow==10.1.0 has no 3.13 wheel and
+# fails the Mac installer with "Failed to install dependencies".
+Django>=5.2.8,<5.3
+python-dateutil==2.9.0.post0
