@@ -78,26 +78,17 @@ def save_json(data: Dict, file_path: str) -> None:
         json.dump(data, file, indent=4)
 
 def get_study_ids(resources_dir: str = RESOURCES_DIR) -> List[str]:
-    """List available study identifiers.
+    """List available study identifiers from disk (files-first).
 
-    Parameters
-    ----------
-    resources_dir: str
-        Root resources directory that contains per-study folders.
-
-    Returns
-    -------
-    list[str]
-        Study IDs from database or filesystem.
+    Studies are `*_study` folders under `resources/`. Does not require
+    `load_resources` or SQLite Study rows. An empty database table cannot
+    hide sample studies.
     """
-    if DJANGO_AVAILABLE and Study:
-        return list(Study.objects.values_list('study_id', flat=True))
-    # Fallback to file system
     if not os.path.exists(resources_dir):
         return []
     return [
         item for item in os.listdir(resources_dir)
-        if os.path.isdir(os.path.join(resources_dir, item))
+        if os.path.isdir(os.path.join(resources_dir, item)) and '_study' in item
     ]
 
 

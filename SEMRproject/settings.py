@@ -48,6 +48,10 @@ MANAGERS = ADMINS
 # Custom user model
 AUTH_USER_MODEL = 'SEMRinterface.User'
 
+# Research-stable default: no login. Set SEMR_REQUIRE_LOGIN=1 to enable Django auth.
+SEMR_REQUIRE_LOGIN = os.environ.get('SEMR_REQUIRE_LOGIN', '0').lower() in ('1', 'true', 'yes')
+LOGIN_URL = '/SEMRinterface/login/'
+
 DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.sqlite3',
