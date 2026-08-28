@@ -9,7 +9,7 @@ remain defined but unused by the default research URL routes.
 from functools import wraps
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.template import loader
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.conf import settings as django_settings
@@ -35,15 +35,24 @@ def _login_required_if_configured(view_func):
     return _wrapped
 
 
+@ensure_csrf_cookie
 def select_study(request):
     print(request.path_info)
     from SEMRinterface.utils import get_list_study_id
+    from SEMRinterface.lab_settings import get_eye_tracking_mode, save_lab_settings
+
+    if request.method == 'POST':
+        save_lab_settings(request, {
+            'SEMR_EYE_TRACKING_MODE': request.POST.get('eye_tracking_mode') == '1',
+        })
+        return redirect('select_study')
 
     list_study_id = get_list_study_id(dir_resources)
 
     template = loader.get_template('SEMRinterface/study_selection_screen.html')
     context_dict = {
         'list_study_id': list_study_id,
+        'eye_tracking_mode': get_eye_tracking_mode(request),
         'test': 'test'
     }
     return HttpResponse(template.render(context_dict, request))
@@ -180,6 +189,7 @@ def save_selected_items(request, study_id, user_id, case_id):
 @ensure_csrf_cookie
 def case_viewer(request, study_id, user_id, case_id, time_step=0):
     print(request.path_info)
+    from SEMRinterface.lab_settings import get_eye_tracking_mode
     time_step = int(time_step)
 
     ## load global files ##
@@ -221,7 +231,8 @@ def case_viewer(request, study_id, user_id, case_id, time_step=0):
         'dict_observations': dict_observations,
         'test': 'test',
         'list_1_2': [1, 2],
-        'list_3_4_5_6': [3, 4, 5, 6]
+        'list_3_4_5_6': [3, 4, 5, 6],
+        'eye_tracking_mode': get_eye_tracking_mode(request),
     }
     return HttpResponse(template.render(context_dict, request))
 
