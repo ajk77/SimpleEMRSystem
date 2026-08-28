@@ -119,17 +119,38 @@ class DemoStudyFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "demo_study")
         self.assertNotIn("login", response.get("Location") or "")
+        html = response.content.decode()
+        self.assertNotIn("127.0.0.1", html)
+        self.assertIn("/SEMRinterface/demo_study/", html)
+        self.assertIn("jquery-3.6.4", html)
 
     def test_user_list_contains_testUser1(self):
         response = self.client.get("/SEMRinterface/demo_study/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "testUser1")
+        html = response.content.decode()
+        self.assertNotIn("127.0.0.1", html)
+        self.assertIn("/SEMRinterface/demo_study/testUser1/", html)
 
     def test_case_list_contains_assigned_10000101(self):
         response = self.client.get("/SEMRinterface/demo_study/testUser1/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "10000101")
         self.assertContains(response, 'id="select10000101"')
+        html = response.content.decode()
+        self.assertNotIn("127.0.0.1", html)
+        self.assertIn("/SEMRinterface/demo_study/testUser1/10000101/", html)
+
+    def test_unmounted_2024_2_routes_return_404(self):
+        for path in (
+            "/SEMRinterface/login/",
+            "/SEMRinterface/welcome/",
+            "/SEMRinterface/select/",
+            "/SEMRinterface/api/info/",
+        ):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, 404)
 
     def test_familiar_viewer_has_instructions_demographics_and_observation_id(self):
         ob_code = self._obs_code()
