@@ -232,3 +232,47 @@ Docker Compose: web + optional named volume. No extra services for v1.
 | PR 9 typing | S |
 
 PR 1 unblocks everything. Do not start Docker or AbstractUser migrations before a case chart is visible.
+
+---
+
+## Phase 2 — incremental modernization (after restore)
+
+Phase 1 (sections 0–8 above) restored the research-stable viewer from `a2c35bf`. Phase 2 modernizes incrementally **without** replacing the lab instrument. `docs/CURRENT_STATE.md` is stale: it still says `master` is a broken 2024.2 shell. The research viewer is restored. Live behavior is the restored `a2c35bf` flow plus later PRs; this file's Phase 2 section is the remaining work.
+
+### Principles
+
+- Incremental PRs; `manage.py runserver` still shows a demo case after each.
+- Picker screens (study/user/case) may be modernized and made responsive. They are facilitator UI, not the timed instrument.
+- Case viewer: when `SEMR_EYE_TRACKING_MODE` is on (default), keep pixel-stable 1920×1080, Highcharts, cyan taskbox, row ids (`rowBUN`, `rowmedidx*`), `selected_ids` format, familiar/select copy, `time_step`. When off, a later PR may add a fluid/responsive viewer. Same Highcharts engine either way. Do not replace Highcharts.
+- `resources/` JSON remains the authoring format.
+- Tests before restyle.
+
+### Sequenced slices (Phase 2)
+
+#### 2.0 Characterization tests (THIS PR)
+
+`FUNCTIONALITY.md` checks on a **temp copy** of `demo_study` (never write the committed study). Client tests cover study/user/case pickers, familiar/select viewer HTML, CSRF POST of `selected_ids` → JSONL, mark-complete and reset. Default `SEMR_EYE_TRACKING_MODE` is on.
+
+#### 2.1 Hygiene
+
+- Relative URLs on pickers (today they hardcode `http://127.0.0.1:8000/SEMRinterface/...`).
+- Pin jQuery on pickers.
+- Unmount then delete 2024.2 leftovers: welcome, login, profile, `unified_selection_new`, `case_viewer_new`, `components/`, `static/js/core/`, `modules/`, `tutorial.js`, `custom.css` unused by the research viewer, `auth_views`, health_check leaky `/api/info/`.
+- Keep Bootstrap 3 + `emr_3.js` + `bs_3.css` on the viewer.
+- Local `bootstrap.min.js` is unused (viewer uses jsDelivr pin of `a2c35bf`).
+
+#### 2.2 Dynamic content
+
+Replace `{% autoescape off %}` JSON dumps in `case_viewer.html` with `json_script` + `JSON.parse` in `emr_3.js`. Preserve row ids. CSRF on `selected_items` (already not exempt on research `save_selected_items`).
+
+#### 2.3 Modern picker screens
+
+Shared layout, readable type, cards/table, responsive, no F11 nag required on laptops. Keep three-step path URLs. Assigned vs completed cases. Do not collapse to the 2024.2 dropdown wizard.
+
+#### 2.4 Viewer
+
+First vendor Highcharts/jQuery/Bootstrap for offline labs (layout unchanged). Then if `SEMR_EYE_TRACKING_MODE=0`, optional fluid layout. Lab mode remains default.
+
+#### 2.5 Backend leftovers from original plan
+
+Env secrets, `load_resources` walking `resources/`, `CaseAssignment` so two tabs cannot clobber `cases_completed`, restore `tools/loaddata_synthea.py`.
