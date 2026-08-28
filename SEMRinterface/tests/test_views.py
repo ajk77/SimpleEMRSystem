@@ -9,6 +9,7 @@ import json
 import shutil
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 from django.conf import settings
 from django.test import Client, TestCase
@@ -31,6 +32,12 @@ class DemoStudyFlowTests(TestCase):
         self._orig = views.dir_resources
         views.dir_resources = str(self.tmp)
         self.client = Client(enforce_csrf_checks=True)
+        self._runtime_file = self.tmp / "semr_runtime.json"
+        self._runtime_patcher = patch(
+            "SEMRinterface.lab_settings.runtime_path",
+            return_value=str(self._runtime_file),
+        )
+        self._runtime_patcher.start()
         self._real_results = (
             Path(settings.BASE_DIR) / "resources" / "demo_study" / "stored_results.txt"
         ).read_text()
@@ -39,6 +46,7 @@ class DemoStudyFlowTests(TestCase):
         ).read_text()
 
     def tearDown(self):
+        self._runtime_patcher.stop()
         views.dir_resources = self._orig
         shutil.rmtree(self.tmp, ignore_errors=True)
 
@@ -52,8 +60,53 @@ class DemoStudyFlowTests(TestCase):
         self.assertEqual((real / "stored_results.txt").read_text(), self._real_results)
         self.assertEqual((real / "user_details.json").read_text(), self._real_users)
 
-    def test_eye_tracking_mode_defaults_on(self):
-        self.assertTrue(settings.SEMR_EYE_TRACKING_MODE)
+    def test_eye_tracking_mode_defaults_off(self):
+        self.assertFalse(settings.SEMR_EYE_TRACKING_MODE)
+
+    def test_home_screen_shows_unchecked_eye_tracking_toggle(self):
+        response = self.client.get("/SEMRinterface/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Lab settings")
+        html = response.content.decode()
+        self.assertIn('id="eye_tracking_mode"', html)
+        self.assertNotIn(
+            'id="eye_tracking_mode" value="1" checked',
+            html,
+        )
+
+    def test_home_screen_saves_eye_tracking_mode(self):
+        response = self.client.get("/SEMRinterface/")
+        self.assertEqual(response.status_code, 200)
+        csrftoken = self.client.cookies["csrftoken"].value
+        response = self.client.post(
+            "/SEMRinterface/",
+            data={
+                "csrfmiddlewaretoken": csrftoken,
+                "eye_tracking_mode": "1",
+                "save_settings": "1",
+            },
+        )
+        self.assertRedirects(response, "/SEMRinterface/")
+        self.assertTrue(self.client.session["SEMR_EYE_TRACKING_MODE"])
+        saved = json.loads(self._runtime_file.read_text())
+        self.assertTrue(saved["SEMR_EYE_TRACKING_MODE"])
+
+        follow = self.client.get("/SEMRinterface/")
+        html = follow.content.decode()
+        self.assertIn('id="eye_tracking_mode" value="1" checked', html)
+
+        csrftoken = self.client.cookies["csrftoken"].value
+        response = self.client.post(
+            "/SEMRinterface/",
+            data={
+                "csrfmiddlewaretoken": csrftoken,
+                "save_settings": "1",
+            },
+        )
+        self.assertRedirects(response, "/SEMRinterface/")
+        self.assertFalse(self.client.session["SEMR_EYE_TRACKING_MODE"])
+        saved = json.loads(self._runtime_file.read_text())
+        self.assertFalse(saved["SEMR_EYE_TRACKING_MODE"])
 
     def test_root_redirects_to_semrinterface(self):
         response = self.client.get("/")
