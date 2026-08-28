@@ -53,8 +53,9 @@ SEMR_REQUIRE_LOGIN = os.environ.get('SEMR_REQUIRE_LOGIN', '0').lower() in ('1', 
 LOGIN_URL = '/SEMRinterface/login/'
 
 # Eye-tracking / highlighting studies need a locked 1920x1080 viewer.
-# Default on. When off, a later slice may serve a fluid/responsive viewer.
-SEMR_EYE_TRACKING_MODE = os.environ.get('SEMR_EYE_TRACKING_MODE', '1').lower() in ('1', 'true', 'yes')
+# Default off. Toggle from Lab settings on the study selection (home) screen,
+# or set SEMR_EYE_TRACKING_MODE=1 in the environment as the factory default.
+SEMR_EYE_TRACKING_MODE = os.environ.get('SEMR_EYE_TRACKING_MODE', '0').lower() in ('1', 'true', 'yes')
 
 DATABASES = {
         'default': {

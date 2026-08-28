@@ -243,15 +243,20 @@ Phase 1 (sections 0–8 above) restored the research-stable viewer from `a2c35bf
 
 - Incremental PRs; `manage.py runserver` still shows a demo case after each.
 - Picker screens (study/user/case) may be modernized and made responsive. They are facilitator UI, not the timed instrument.
-- Case viewer: when `SEMR_EYE_TRACKING_MODE` is on (default), keep pixel-stable 1920×1080, Highcharts, cyan taskbox, row ids (`rowBUN`, `rowmedidx*`), `selected_ids` format, familiar/select copy, `time_step`. When off, a later PR may add a fluid/responsive viewer. Same Highcharts engine either way. Do not replace Highcharts.
+- Case viewer: when `SEMR_EYE_TRACKING_MODE` is on, keep pixel-stable 1920×1080, Highcharts, cyan taskbox, row ids (`rowBUN`, `rowmedidx*`), `selected_ids` format, familiar/select copy, `time_step`. When off, a later PR may add a fluid/responsive viewer. Same Highcharts engine either way. Do not replace Highcharts.
 - `resources/` JSON remains the authoring format.
 - Tests before restyle.
 
 ### Sequenced slices (Phase 2)
 
-#### 2.0 Characterization tests (THIS PR)
+#### 2.0 Characterization tests
 
-`FUNCTIONALITY.md` checks on a **temp copy** of `demo_study` (never write the committed study). Client tests cover study/user/case pickers, familiar/select viewer HTML, CSRF POST of `selected_ids` → JSONL, mark-complete and reset. Default `SEMR_EYE_TRACKING_MODE` is on.
+`FUNCTIONALITY.md` checks on a **temp copy** of `demo_study` (never write the committed study). Client tests cover study/user/case pickers, familiar/select viewer HTML, CSRF POST of `selected_ids` → JSONL, mark-complete and reset.
+
+#### 2.0a Lab settings on the home screen (THIS PR)
+
+- Default `SEMR_EYE_TRACKING_MODE` off.
+- Study selection screen has a Lab settings panel. Saving writes the session and `semr_runtime.json` (gitignored). `SEMR_EYE_TRACKING_MODE=1` in the environment remains the factory default before any UI save.
 
 #### 2.1 Hygiene
 
@@ -271,7 +276,7 @@ Shared layout, readable type, cards/table, responsive, no F11 nag required on la
 
 #### 2.4 Viewer
 
-First vendor Highcharts/jQuery/Bootstrap for offline labs (layout unchanged). Then if `SEMR_EYE_TRACKING_MODE=0`, optional fluid layout. Lab mode remains default.
+First vendor Highcharts/jQuery/Bootstrap for offline labs (layout unchanged). Then if eye-tracking mode is off (the default), optional fluid layout. Turn it on from Lab settings on the home screen when a study needs the locked 1920×1080 viewer.
 
 #### 2.5 Backend leftovers from original plan
 
