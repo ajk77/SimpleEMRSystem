@@ -188,7 +188,10 @@ class DemoStudyFlowTests(TestCase):
             self.assertIn('id="case-observations"', html)
             self.assertIn("init_case_viewer", html)
             self.assertNotIn("autoescape", html)
-            self.assertNotIn("add_observation_chart(", html)
+            # Inline init_case_viewer calls add_observation_chart(code, ...);
+            # the old autoescape dump was add_observation_chart("BUN", {json}).
+            self.assertNotIn(f'add_observation_chart("{ob_code}"', html)
+            self.assertNotIn("add_observation_chart('", html)
 
         template_src = (
             Path(settings.BASE_DIR)
