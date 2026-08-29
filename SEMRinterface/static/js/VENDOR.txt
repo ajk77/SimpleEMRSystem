@@ -1,0 +1,12 @@
+Vendored JavaScript for the case viewer (offline labs).
+
+Do not minify or edit these files. Versions and sources:
+
+- jquery-3.6.4.min.js — jQuery v3.6.4
+  https://code.jquery.com/jquery-3.6.4.min.js
+- highstock-8.2.2.js — Highstock JS v8.2.2
+  https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.2/highstock.js
+- bootstrap.min.js — Bootstrap v3.3.7 (from a2c35bf)
+  https://cdn.jsdelivr.net/gh/ajk77/SimpleEMRSystem@a2c35bf/SEMRinterface/static/js/bootstrap.min.js
+
+Highcharts is commercial software; a license is still required for non-eval use.
