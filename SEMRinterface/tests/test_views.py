@@ -5,6 +5,7 @@ write the committed resources/ tree. views.py binds dir_resources at import;
 setUp patches SEMRinterface.views.dir_resources to that temp directory.
 """
 
+import importlib.util
 import json
 import shutil
 import tempfile
@@ -187,6 +188,12 @@ class DemoStudyFlowTests(TestCase):
             self.assertIn('type="application/json"', html)
             self.assertIn('id="case-observations"', html)
             self.assertIn("init_case_viewer", html)
+            self.assertIn("/static/js/jquery-3.6.4.min.js", html)
+            self.assertIn("/static/js/highstock-8.2.2.js", html)
+            self.assertIn("/static/js/bootstrap.min.js", html)
+            self.assertNotIn("code.jquery.com", html)
+            self.assertNotIn("cdnjs.cloudflare.com", html)
+            self.assertNotIn("cdn.jsdelivr.net", html)
             self.assertNotIn("autoescape", html)
             # Inline init_case_viewer calls add_observation_chart(code, ...);
             # the old autoescape dump was add_observation_chart("BUN", {json}).
@@ -202,6 +209,18 @@ class DemoStudyFlowTests(TestCase):
         ).read_text()
         self.assertNotIn("{% autoescape", template_src)
         self.assertNotIn("endautoescape", template_src)
+
+    def test_fetch_frontend_assets_are_gitignored(self):
+        fetch_path = Path(settings.BASE_DIR) / "tools" / "fetch_frontend.py"
+        spec = importlib.util.spec_from_file_location("fetch_frontend", fetch_path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        gitignore = (Path(settings.BASE_DIR) / ".gitignore").read_text()
+        for asset in mod.ASSETS:
+            self.assertIn(
+                f"SEMRinterface/static/js/{asset['name']}",
+                gitignore,
+            )
 
     def test_select_epoch_has_select_copy_and_checkboxes(self):
         response = self.client.get("/SEMRinterface/demo_study/testUser1/10000101/1/")

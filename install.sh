@@ -63,6 +63,10 @@ if ! "$VENV_PY" -m pip install -r requirements.txt; then
 fi
 
 echo
+echo "Downloading pinned frontend scripts..."
+"$VENV_PY" tools/fetch_frontend.py
+
+echo
 echo "Setting up database..."
 "$VENV_PY" manage.py migrate
 

@@ -65,3 +65,8 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# Downloaded at install (tools/fetch_frontend.py); do not commit
+SEMRinterface/static/js/jquery-3.6.4.min.js
+SEMRinterface/static/js/highstock-8.2.2.js
+SEMRinterface/static/js/bootstrap.min.js
