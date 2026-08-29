@@ -258,7 +258,7 @@ Phase 1 (sections 0–8 above) restored the research-stable viewer from `a2c35bf
 - Default `SEMR_EYE_TRACKING_MODE` off.
 - Study selection screen has a Lab settings panel. Saving writes the session and `semr_runtime.json` (gitignored). `SEMR_EYE_TRACKING_MODE=1` in the environment remains the factory default before any UI save.
 
-#### 2.1 Hygiene (THIS PR; done when merged)
+#### 2.1 Hygiene (merged, PR 14)
 
 - Relative `{% url %}` links on study/user/case pickers (no more hardcoded `http://127.0.0.1:8000/SEMRinterface/...`).
 - Pin jQuery 3.6.4 on pickers (same pin as the viewer).
@@ -267,11 +267,13 @@ Phase 1 (sections 0–8 above) restored the research-stable viewer from `a2c35bf
 - Keep Bootstrap 3 + `emr_3.js` + `bs_3.css` on the viewer.
 - Viewer still uses jsDelivr `bootstrap.min.js` pin of `a2c35bf` (local stub deleted).
 
-#### 2.2 Dynamic content
+#### 2.2 Dynamic content (THIS PR)
 
-Replace `{% autoescape off %}` JSON dumps in `case_viewer.html` with `json_script` + `JSON.parse` in `emr_3.js`. Preserve row ids. CSRF on `selected_items` (already not exempt on research `save_selected_items`).
+Replace `{% autoescape off %}` JSON dumps in `case_viewer.html` with Django `json_script` + `JSON.parse` in `emr_3.js`. Preserve row ids (`rowBUN`, `rowmedidx*`). CSRF on `selected_items` (already not exempt on research `save_selected_items`). No layout/visual change; time-slider JS is not touched.
 
-#### 2.3 Modern picker screens
+PR 15's time-slider patch was reverted (PR 16). The second-drag issue is deferred; do not reintroduce `ordinal:false`, `liveRedraw:false`, `setExtremes` redraw flags, or dropping `reflow`.
+
+#### 2.3 Modern picker screens (next)
 
 Shared layout, readable type, cards/table, responsive, no F11 nag required on laptops. Keep three-step path URLs. Assigned vs completed cases. Do not collapse to the 2024.2 dropdown wizard.
 
