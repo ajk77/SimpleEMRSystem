@@ -49,6 +49,15 @@ if errorlevel 1 (
     exit /b 1
 )
 
+echo.
+echo Downloading pinned frontend scripts...
+python tools\fetch_frontend.py
+if errorlevel 1 (
+    echo ERROR: Failed to download frontend scripts
+    pause
+    exit /b 1
+)
+
 REM Run migrations
 echo.
 echo Setting up database...
