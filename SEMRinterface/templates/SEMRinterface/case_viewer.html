@@ -16,8 +16,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.2/highstock.js" type="text/javascript"></script>
 
     <script src="https://cdn.jsdelivr.net/gh/ajk77/SimpleEMRSystem@a2c35bf/SEMRinterface/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/emr_3.js"></script>
-    <script src="/static/js/emr_3_highcharts_compat.js"></script>
+    <script src="/static/js/emr_3.js?v=jsonscript"></script>
+    <script src="/static/js/emr_3_highcharts_compat.js?v=jsonscript"></script>
 </head>
 <body>
 {{ dict_case_details|json_script:"case-details" }}
@@ -30,6 +30,54 @@
 {{ user_id|json_script:"user-id" }}
 {{ case_id|json_script:"case-id" }}
 {{ time_step|json_script:"time-step" }}
+<script type="text/javascript">
+function read_json_script(elementId) {
+    var el = document.getElementById(elementId);
+    if (!el) {
+        throw new Error('Missing json_script#' + elementId);
+    }
+    return JSON.parse(el.textContent);
+}
+var _case_viewer_data = null;
+var _case_viewer_time_ready = false;
+var _case_viewer_charts_ready = false;
+function get_case_viewer_data() {
+    if (_case_viewer_data) {
+        return _case_viewer_data;
+    }
+    _case_viewer_data = {
+        caseDetails: read_json_script('case-details'),
+        studyId: read_json_script('study-id'),
+        userId: read_json_script('user-id'),
+        caseId: read_json_script('case-id'),
+        timeStep: read_json_script('time-step'),
+        observations: read_json_script('case-observations'),
+        variableDetails: read_json_script('variable-details'),
+        medications: read_json_script('case-medications'),
+        medDetails: read_json_script('med-details'),
+        physioGroups: read_json_script('physio-panel-groups')
+    };
+    return _case_viewer_data;
+}
+function init_case_viewer() {
+    var data = get_case_viewer_data();
+    if (!_case_viewer_time_ready) {
+        set_case_details(data.caseDetails, data.studyId, data.userId, data.caseId, data.timeStep);
+        set_next_step_url();
+        getchartTS("div[id='time_selector']", data.caseDetails, data.timeStep);
+        _case_viewer_time_ready = true;
+    }
+    if (!_case_viewer_charts_ready && document.getElementById('lab_tracking')) {
+        Object.keys(data.observations).forEach(function (code) {
+            add_observation_chart(code, data.observations[code], data.variableDetails[code], data.physioGroups);
+        });
+        Object.keys(data.medications).forEach(function (code) {
+            add_medication_chart(code, data.medications[code], data.medDetails[code]);
+        });
+        _case_viewer_charts_ready = true;
+    }
+}
+</script>
 <div class="glyphicon glyphicon-refresh" id="loading_new_patient"></div> <!-- this glyphicon blurrs the screen on loading -->
 <div class="container">
 <!-- Introduction popup -->
