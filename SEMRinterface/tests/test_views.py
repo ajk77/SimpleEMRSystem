@@ -122,7 +122,7 @@ class DemoStudyFlowTests(TestCase):
         html = response.content.decode()
         self.assertNotIn("127.0.0.1", html)
         self.assertIn("/SEMRinterface/demo_study/", html)
-        self.assertIn("jquery-3.6.4", html)
+        self.assertNotIn("jquery-3.6.4", html)
 
     def test_user_list_contains_testUser1(self):
         response = self.client.get("/SEMRinterface/demo_study/")
@@ -140,6 +140,22 @@ class DemoStudyFlowTests(TestCase):
         html = response.content.decode()
         self.assertNotIn("127.0.0.1", html)
         self.assertIn("/SEMRinterface/demo_study/testUser1/10000101/", html)
+
+    def test_picker_screens_have_no_f11_nag(self):
+        pages = (
+            ("/SEMRinterface/", "Study selection"),
+            ("/SEMRinterface/demo_study/", "User selection"),
+            ("/SEMRinterface/demo_study/testUser1/", "Case selection"),
+        )
+        for path, title in pages:
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, 200)
+                html = response.content.decode()
+                self.assertNotIn("F11", html)
+                self.assertNotIn('id="fs"', html)
+                self.assertNotIn("jquery-3.6.4", html)
+                self.assertIn(f"<title>{title}</title>", html)
 
     def test_unmounted_2024_2_routes_return_404(self):
         for path in (
