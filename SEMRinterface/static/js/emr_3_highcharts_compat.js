@@ -44,18 +44,18 @@
         }
         $("#selectedTimes").text(get_formatted_date(selectedMin) + ' to ' + get_formatted_date(selectedMax));
         try {
-            $("#lab-time1").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time2").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time3").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time4").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time5").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time6").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time11").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time12").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time13").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time14").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time15").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-            $("#lab-time16").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
+            $("#lab-time1").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time2").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time3").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time4").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time5").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time6").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time11").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time12").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time13").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time14").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time15").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+            $("#lab-time16").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
         } catch (err) {}
         for (var i = 0; i < chartsContainers.length; i++) {
             var chart = chartsContainers[i];
@@ -70,9 +70,8 @@
             }
             if (currData.length === 0) {
                 try {
-                    chart.xAxis[0].setExtremes(selectedMin, selectedMax);
+                    chart.xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
                     $("div[id='" + chartrowids[i] + "']").show();
-                    chart.reflow();
                 } catch (err) {}
                 continue;
             }
@@ -85,9 +84,8 @@
             if (notPoints) {
                 $("div[id='" + chartrowids[i] + "']").hide();
             } else {
-                chart.xAxis[0].setExtremes(selectedMin, selectedMax);
+                chart.xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
                 $("div[id='" + chartrowids[i] + "']").show();
-                chart.reflow();
             }
         }
     };

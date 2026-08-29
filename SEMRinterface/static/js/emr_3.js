@@ -153,18 +153,18 @@ function updateExtremes(){
     //update time axes
     $("#selectedTimes").text(get_formatted_date(selectedMin) + ' to ' + get_formatted_date(selectedMax));
     try {
-        $("#lab-time1").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time2").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time3").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time4").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time5").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time6").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time11").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time12").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time13").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time14").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time15").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
-        $("#lab-time16").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax);
+        $("#lab-time1").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time2").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time3").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time4").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time5").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time6").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time11").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time12").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time13").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time14").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time15").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
+        $("#lab-time16").highcharts().xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
     }catch(err){}
     // search for charts that do not have points within defined axes.
     for (var i = 0; i < chartsContainers.length; i++) {
@@ -182,9 +182,8 @@ function updateExtremes(){
         if (notPoints){ // Hides charts when no points in selected range
             $("div[id='"+chartrowids[i]+"']").hide();
         }else{
-            chartsContainers[i].xAxis[0].setExtremes(selectedMin, selectedMax);
+            chartsContainers[i].xAxis[0].setExtremes(selectedMin, selectedMax, true, false);
             $("div[id='"+chartrowids[i]+"']").show();
-            chartsContainers[i].reflow();
         }
     }
 }
@@ -618,7 +617,7 @@ function getchartT(id) {
                 spacingRight:6,
                 events: {load: function () {
                     var range = this.xAxis[0].getExtremes();
-                    this.xAxis[0].setExtremes(Math.max(range.min, range.max-216000000), range.max);}} // On load update selected range // 2.5 days
+                    this.xAxis[0].setExtremes(Math.max(range.min, range.max-216000000), range.max, true, false);}} // On load update selected range // 2.5 days
             },
             scrollbar: {enabled: false},
             navigator: {enabled: false, height: 1, top:4},
@@ -640,7 +639,8 @@ function getchartT(id) {
                 labels: {format: '{value:%m/%d}', padding: 1},
                 //tickPixelInterval: 25,
                 min: displayed_min_t,
-                max: displayed_max_t
+                max: displayed_max_t,
+                ordinal: false
             },
             yAxis:{ labels: { enabled:false }, title: { text: null}, top: 40} // top is what flips the navigator
 		});
@@ -657,11 +657,11 @@ function getchartTS(id,case_details,time_step=0) {
                 spacingRight:5,
                 events: {load: function () {
                     var range = this.xAxis[0].getExtremes();
-                    this.xAxis[0].setExtremes(Math.max(range.min, range.max-216000000), range.max);
+                    this.xAxis[0].setExtremes(Math.max(range.min, range.max-216000000), range.max, true, false);
                 }} // On load update selected range // 2.5 days
                 },
             scrollbar: {enabled: false},
-            navigator: {enabled: true, height: 35, top:0},
+            navigator: {enabled: true, height: 35, top:0, liveRedraw: false, adaptToUpdatedData: false},
             //navigator: {enabled: true, height: 500, top:40},
             rangeSelector : {
                 enabled: false,
@@ -676,8 +676,15 @@ function getchartTS(id,case_details,time_step=0) {
             title: {text: null},
             legend: { enabled: false},
             credits: { enabled:false},
-            xAxis: {top: -10,labels: {enabled: false}, min: case_details[time_step].min_t, max: case_details[time_step].max_t,
-                events: {afterSetExtremes: function (e) {selectedMin = e.min;selectedMax = e.max;updateExtremes();}}},
+            xAxis: {top: -10,labels: {enabled: false}, min: case_details[time_step].min_t, max: case_details[time_step].max_t, ordinal: false,
+                events: {afterSetExtremes: function (e) {
+                    if (e.min == null || e.max == null || isNaN(e.min) || isNaN(e.max)) {
+                        return;
+                    }
+                    selectedMin = e.min;
+                    selectedMax = e.max;
+                    updateExtremes();
+                }}},
             yAxis:{ labels: { enabled:false }, title: { text: null}} // top is what flips the navigator
     });
 	displayed_min_t = case_details[time_step].min_t;
