@@ -192,6 +192,12 @@ class DemoStudyFlowTests(TestCase):
             # the old autoescape dump was add_observation_chart("BUN", {json}).
             self.assertNotIn(f'add_observation_chart("{ob_code}"', html)
             self.assertNotIn("add_observation_chart('", html)
+            self.assertIn("/static/js/jquery-3.6.4.min.js", html)
+            self.assertIn("/static/js/highstock-8.2.2.js", html)
+            self.assertIn("/static/js/bootstrap.min.js", html)
+            self.assertNotIn("code.jquery.com", html)
+            self.assertNotIn("cdnjs.cloudflare.com", html)
+            self.assertNotIn("cdn.jsdelivr.net", html)
 
         template_src = (
             Path(settings.BASE_DIR)
@@ -208,6 +214,13 @@ class DemoStudyFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, SELECT_COPY)
         self.assertContains(response, "create_selection_screen")
+        html = response.content.decode()
+        self.assertIn("/static/js/jquery-3.6.4.min.js", html)
+        self.assertIn("/static/js/highstock-8.2.2.js", html)
+        self.assertIn("/static/js/bootstrap.min.js", html)
+        self.assertNotIn("code.jquery.com", html)
+        self.assertNotIn("cdnjs.cloudflare.com", html)
+        self.assertNotIn("cdn.jsdelivr.net", html)
 
     def test_post_selected_ids_appends_jsonl_in_temp_study_only(self):
         viewer = self.client.get("/SEMRinterface/demo_study/testUser1/10000101/")
