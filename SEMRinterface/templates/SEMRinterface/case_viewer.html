@@ -20,6 +20,16 @@
     <script src="/static/js/emr_3_highcharts_compat.js"></script>
 </head>
 <body>
+{{ dict_case_details|json_script:"case-details" }}
+{{ dict_observations|json_script:"case-observations" }}
+{{ dict_variable_2_details|json_script:"variable-details" }}
+{{ dict_medications|json_script:"case-medications" }}
+{{ dict_med_2_details|json_script:"med-details" }}
+{{ dict_data_layout.physio_panel_groups|json_script:"physio-panel-groups" }}
+{{ study_id|json_script:"study-id" }}
+{{ user_id|json_script:"user-id" }}
+{{ case_id|json_script:"case-id" }}
+{{ time_step|json_script:"time-step" }}
 <div class="glyphicon glyphicon-refresh" id="loading_new_patient"></div> <!-- this glyphicon blurrs the screen on loading -->
 <div class="container">
 <!-- Introduction popup -->
@@ -45,11 +55,7 @@
 		</ul>
 					<div class="chartcolTS" id="time_selector">
 						<script>
-						{% autoescape off %}
-						set_case_details({{dict_case_details}}, '{{study_id}}', '{{user_id}}', '{{case_id}}', {{time_step}});
-						set_next_step_url();
-						getchartTS("div[id='time_selector']", {{dict_case_details}}, {{time_step}});
-						{% endautoescape %}
+						init_case_viewer();
 						</script>
 					</div>
 			<p class="navbar-text" style="color:#f5f5f5;float:right" id="selectedTimes"></p>
@@ -67,9 +73,7 @@
             <div class="vit-timerow" id="time">
                 <div class="chartcol3" id="lab-time{{i}}">
 					<script>
-                    {% autoescape off %}
                     getchartT("div[id='lab-time{{i}}']");
-                    {% endautoescape %}
                     </script>
                 </div>
            </div>
@@ -80,9 +84,7 @@
            <div class="timerow" id="time">
                 <div class="chartcol3" id="lab-time{{i}}">
                     <script>
-                    {% autoescape off %}
                     getchartT("div[id='lab-time{{i}}']");
-                    {% endautoescape %}
                     </script>
                 </div>
            </div>
@@ -141,22 +143,10 @@
 				<!-- chart rows will be added here via js -->
 			</div>
 			{% endfor %}
-<div> 	
-		{% for ob_code, content in dict_observations.items %}
+<div>
 			<script>
-			{% autoescape off %}
-			add_observation_chart("{{ob_code}}", {{content}}, {{dict_variable_2_details|keyvalue:ob_code}}, {{ dict_data_layout.physio_panel_groups }})
-			{% endautoescape %}
+			init_case_viewer();
 			</script>
-		{% endfor %}
-		
-		{% for med_code, content in dict_medications.items %}		
-			<script>
-			{% autoescape off %}
-			add_medication_chart("{{med_code}}", {{content}}, {{dict_med_2_details|keyvalue:med_code}})
-			{% endautoescape %}
-			</script>
-		{% endfor %}
 </div>
         </div>
 		<!-- end of Lab panel -->
@@ -167,9 +157,7 @@
             <div class="vit-timerow" id="time">
                 <div class="chartcol3" id="lab-time1{{i}}">
 					<script>
-                    {% autoescape off %}
                     getchartT("div[id='lab-time1{{i}}']");
-                    {% endautoescape %}
                     </script>
                 </div>
            </div>
@@ -180,9 +168,7 @@
            <div class="timerow" id="time">
                 <div class="chartcol3" id="lab-time1{{i}}">
                     <script>
-                    {% autoescape off %}
                     getchartT("div[id='lab-time1{{i}}']");
-                    {% endautoescape %}
                     </script>
                 </div>
            </div>
@@ -222,9 +208,7 @@
 
 			{% if show_checkboxes %}
 				<script>
-	            {% autoescape off %}
 	            create_selection_screen();
-	            {% endautoescape %}
 	            </script>
             {% endif %}
 

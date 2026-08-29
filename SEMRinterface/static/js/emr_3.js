@@ -90,6 +90,61 @@ function set_next_step_url(){
 	next_step_url = '/SEMRinterface/' + study_id + '/' +user_id+'/'+case_id + '/' + next_step + '/';	
 }
 
+// Parse Django json_script payloads (type="application/json") //
+function read_json_script(elementId) {
+    var el = document.getElementById(elementId);
+    if (!el) {
+        throw new Error('Missing json_script#' + elementId);
+    }
+    return JSON.parse(el.textContent);
+}
+
+// Load case-viewer JSON once, then call existing chart helpers.
+// Invoked twice during parse: navbar (time selector) then after panel
+// groups exist (observation/med rows). Keeps getchartTS before getchartT
+// and charts before create_selection_screen.
+var _case_viewer_data = null;
+var _case_viewer_time_ready = false;
+var _case_viewer_charts_ready = false;
+
+function get_case_viewer_data() {
+    if (_case_viewer_data) {
+        return _case_viewer_data;
+    }
+    _case_viewer_data = {
+        caseDetails: read_json_script('case-details'),
+        studyId: read_json_script('study-id'),
+        userId: read_json_script('user-id'),
+        caseId: read_json_script('case-id'),
+        timeStep: read_json_script('time-step'),
+        observations: read_json_script('case-observations'),
+        variableDetails: read_json_script('variable-details'),
+        medications: read_json_script('case-medications'),
+        medDetails: read_json_script('med-details'),
+        physioGroups: read_json_script('physio-panel-groups')
+    };
+    return _case_viewer_data;
+}
+
+function init_case_viewer() {
+    var data = get_case_viewer_data();
+    if (!_case_viewer_time_ready) {
+        set_case_details(data.caseDetails, data.studyId, data.userId, data.caseId, data.timeStep);
+        set_next_step_url();
+        getchartTS("div[id='time_selector']", data.caseDetails, data.timeStep);
+        _case_viewer_time_ready = true;
+    }
+    if (!_case_viewer_charts_ready && document.getElementById('lab_tracking')) {
+        Object.keys(data.observations).forEach(function (code) {
+            add_observation_chart(code, data.observations[code], data.variableDetails[code], data.physioGroups);
+        });
+        Object.keys(data.medications).forEach(function (code) {
+            add_medication_chart(code, data.medications[code], data.medDetails[code]);
+        });
+        _case_viewer_charts_ready = true;
+    }
+}
+
 // Functionality for the continue button //
 function link_advance(){
     if (selected_items.length > 0){

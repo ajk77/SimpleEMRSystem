@@ -165,9 +165,24 @@ class DemoStudyFlowTests(TestCase):
             self.assertIn("age", html)
             self.assertIn("64", html)
             self.assertIn("Vitals", html)
-            # Template calls add_observation_chart("BUN", ...); emr_3.js
-            # builds id="rowBUN" / chartBUN from that key (JS is not executed here).
-            self.assertIn(f'add_observation_chart("{ob_code}"', html)
+            # Observation keys are embedded via json_script; emr_3.js still
+            # builds id="rowBUN" / chartBUN from those keys (JS is not executed here).
+            self.assertIn(f'"{ob_code}"', html)
+            self.assertIn('type="application/json"', html)
+            self.assertIn('id="case-observations"', html)
+            self.assertIn("init_case_viewer", html)
+            self.assertNotIn("autoescape", html)
+            self.assertNotIn("add_observation_chart(", html)
+
+        template_src = (
+            Path(settings.BASE_DIR)
+            / "SEMRinterface"
+            / "templates"
+            / "SEMRinterface"
+            / "case_viewer.html"
+        ).read_text()
+        self.assertNotIn("{% autoescape", template_src)
+        self.assertNotIn("endautoescape", template_src)
 
     def test_select_epoch_has_select_copy_and_checkboxes(self):
         response = self.client.get("/SEMRinterface/demo_study/testUser1/10000101/1/")
