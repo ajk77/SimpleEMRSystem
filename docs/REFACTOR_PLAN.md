@@ -273,15 +273,17 @@ Replace `{% autoescape off %}` JSON dumps in `case_viewer.html` with Django `jso
 
 PR 15's time-slider patch was reverted (PR 16). The second-drag issue is deferred; do not reintroduce `ordinal:false`, `liveRedraw:false`, `setExtremes` redraw flags, or dropping `reflow`.
 
-#### 2.3 Modern picker screens (THIS PR)
+#### 2.3 Modern picker screens (merged, PR 19)
 
 Shared `picker_base.html` + `static/css/picker.css` (not `bs_3.css`). Readable system type, max-width ~44rem, study cards, user/case tables, no F11 nag, no jQuery on pickers. Lab settings stay on home with the same field names (`eye_tracking_mode`, `save_settings`). Keep three-step path URLs and `id="select{{ case_id }}"`. Assigned vs completed cases visually distinct. Reset / Mark Complete use vanilla DOM (`getElementById` / `style.display`).
 
 These screens are facilitator UI. The case viewer remains the lab instrument (Highcharts, `selected_ids`, row ids, time slider, `json_script`). Do not collapse pickers to the 2024.2 dropdown wizard (`welcome` / `login` / `unified_selection_new`).
 
-#### 2.4 Viewer (next)
+#### 2.4 Viewer (THIS PR: vendoring; layout unchanged)
 
-First vendor Highcharts/jQuery/Bootstrap for offline labs (layout unchanged). Then if eye-tracking mode is off (the default), optional fluid layout. Turn it on from Lab settings on the home screen when a study needs the locked 1920×1080 viewer.
+This PR vendors jQuery 3.6.4, Highstock 8.2.2, and Bootstrap 3.3.7 into `SEMRinterface/static/js/` so the case viewer works offline. Layout/CSS/chart logic is unchanged. Highcharts 8.2.2 is vendored from the same pin previously loaded from cdnjs; Highcharts is commercial software and a license is still required for non-eval use.
+
+Next: optional fluid layout when `SEMR_EYE_TRACKING_MODE` is off (the default). Turn eye-tracking mode on from Lab settings on the home screen when a study needs the locked 1920×1080 viewer.
 
 #### 2.5 Backend leftovers from original plan
 
