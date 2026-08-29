@@ -2,30 +2,17 @@
 SEMRinterface/urls.py
 package github.com/ajk77/SimpleEMRProject
 
-This file contails the application's url patterns.
+This file contains the application's url patterns.
 
 Research-stable path routes from a2c35bf are the default study/user/case flow.
-2024.2 routes (login, welcome, select, case_viewer_new, health) remain mounted
-but unused by the research viewer. Specific paths are listed before the
-catch-all study_id routes.
+Specific paths (health) are listed before the catch-all study_id routes.
 """
 from django.urls import path, re_path
-from . import views, auth_views, health_check
+from . import views, health_check
 
 urlpatterns = [
-    # 2024.2 routes kept unused (must be before catch-all study_id)
-    path('login/', auth_views.login_view, name='login'),
-    path('logout/', auth_views.logout_view, name='logout'),
-    path('profile/', auth_views.profile_view, name='profile'),
-    path('change-password/', auth_views.change_password_view, name='change_password'),
-    path('welcome/', views.welcome_view, name='welcome'),
-    path('select/', views.unified_selection_view, name='unified_selection'),
-    path('case_viewer/', views.case_viewer_new, name='case_viewer_new'),
-    path('api/get_case_data/', views.get_case_data, name='get_case_data'),
     path('health/', health_check.health_check, name='health_check'),
     path('api/health/', health_check.health_check, name='api_health'),
-    path('api/info/', health_check.system_info, name='system_info'),
-    path('api/quickstart/', health_check.quick_start, name='quick_start'),
 
     # Research-stable routes (a2c35bf)
     re_path(r'^$', views.select_study, name='select_study'),

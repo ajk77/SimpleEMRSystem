@@ -3,36 +3,26 @@ SEMRinterface/views.py
 package github.com/ajk77/SimpleEMRSystem
 
 Research-stable views restored from a2c35bf (file-backed study/user/case flow).
-2024.2 helpers (welcome, unified_selection, get_case_data, case_viewer_new)
-remain defined but unused by the default research URL routes.
 """
-from functools import wraps
-from django.http import HttpResponse, JsonResponse, HttpRequest
+from django.http import HttpResponse, Http404
 from django.template import loader
-from django.shortcuts import render, redirect
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-from django.views.decorators.http import require_http_methods
-from django.conf import settings as django_settings
+from django.shortcuts import redirect
+from django.views.decorators.csrf import ensure_csrf_cookie
 import os.path
 import json
-import logging
 
 # Global variables
 dir_local = os.getcwd()
 dir_resources = os.path.join(dir_local, "resources")
 
-logger = logging.getLogger(__name__)
 
-
-def _login_required_if_configured(view_func):
-    """Apply login_required only when SEMR_REQUIRE_LOGIN is enabled (default off)."""
-    @wraps(view_func)
-    def _wrapped(request, *args, **kwargs):
-        if getattr(django_settings, 'SEMR_REQUIRE_LOGIN', False):
-            from django.contrib.auth.decorators import login_required as _lr
-            return _lr(view_func)(request, *args, **kwargs)
-        return view_func(request, *args, **kwargs)
-    return _wrapped
+def _load_user_details(study_id):
+    dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')
+    try:
+        with open(dir_study_user_details) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise Http404("Study not found")
 
 
 @ensure_csrf_cookie
@@ -61,9 +51,7 @@ def select_study(request):
 def select_user(request, study_id):
     print(request.path_info)
 
-    dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')
-    with open(dir_study_user_details) as f:
-        dict_user_2_details = json.load(f)
+    dict_user_2_details = _load_user_details(study_id)
 
     template = loader.get_template('SEMRinterface/user_selection_screen.html')
     context_dict = {
@@ -77,12 +65,13 @@ def select_user(request, study_id):
 def select_case(request, study_id, user_id):
     print(request.path_info)
 
-    dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')
-    with open(dir_study_user_details) as f:
-        dict_user_2_details = json.load(f)
+    dict_user_2_details = _load_user_details(study_id)
 
-    list_cases_assigned = dict_user_2_details[user_id]['cases_assigned']
-    list_cases_completed = dict_user_2_details[user_id]['cases_completed']
+    try:
+        list_cases_assigned = dict_user_2_details[user_id]['cases_assigned']
+        list_cases_completed = dict_user_2_details[user_id]['cases_completed']
+    except KeyError:
+        raise Http404("User not found")
 
     template = loader.get_template('SEMRinterface/case_selection_screen.html')
     context_dict = {
@@ -107,14 +96,13 @@ def case_reset(request):
         case_id = request.GET['case_id']
 
         # load user details #
-        dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')
-        with open(dir_study_user_details) as f:
-            dict_user_2_details = json.load(f)
+        dict_user_2_details = _load_user_details(study_id)
 
         # remove case from completed list #
         dict_user_2_details[user_id]['cases_completed'].remove(case_id)
 
         # save user details #
+        dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')
         with open(dir_study_user_details, 'w') as f:
             json.dump(dict_user_2_details, f)
 
@@ -138,13 +126,12 @@ def mark_complete(request):
         case_id = request.GET['case_id']
 
         # load user details #
-        dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')
-        with open(dir_study_user_details) as f:
-            dict_user_2_details = json.load(f)
+        dict_user_2_details = _load_user_details(study_id)
 
         dict_user_2_details[user_id]['cases_completed'].append(case_id)
 
         # save user details #
+        dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')
         with open(dir_study_user_details, 'w') as f:
             json.dump(dict_user_2_details, f)
 
@@ -159,13 +146,12 @@ def mark_complete(request):
 def mark_complete_url(request, study_id, user_id, case_id):
     print(request.path_info)
 
-    dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')
-    with open(dir_study_user_details) as f:
-        dict_user_2_details = json.load(f)
+    dict_user_2_details = _load_user_details(study_id)
 
     dict_user_2_details[user_id]['cases_completed'].append(case_id)
 
     # save user details #
+    dir_study_user_details = os.path.join(dir_resources, study_id, 'user_details.json')
     with open(dir_study_user_details, 'w') as f:
         json.dump(dict_user_2_details, f)
 
@@ -235,102 +221,3 @@ def case_viewer(request, study_id, user_id, case_id, time_step=0):
         'eye_tracking_mode': get_eye_tracking_mode(request),
     }
     return HttpResponse(template.render(context_dict, request))
-
-
-# ---------------------------------------------------------------------------
-# 2024.2 helpers kept unused (not deleted). Research flow does not call these.
-# ---------------------------------------------------------------------------
-
-def welcome_view(request: HttpRequest) -> HttpResponse:
-    """Welcome page with tutorial. Unused by the research-stable routes."""
-    if getattr(django_settings, 'SEMR_REQUIRE_LOGIN', False) and not request.user.is_authenticated:
-        from django.shortcuts import redirect
-        return redirect('login')
-    return render(request, 'SEMRinterface/welcome.html')
-
-
-@_login_required_if_configured
-@require_http_methods(["GET", "POST"])
-def unified_selection_view(request: HttpRequest) -> HttpResponse:
-    """Unused 2024.2 unified selection (single definition; not the research flow)."""
-    from .services import get_study_ids, get_user_details, get_case_assignments
-
-    if request.method == 'GET':
-        studies = get_study_ids()
-        context = {'studies': studies}
-        return render(request, 'SEMRinterface/unified_selection_new.html', context)
-
-    if request.method == 'POST':
-        request_type = request.POST.get('type')
-        study_id = request.POST.get('study_id')
-        user_id = request.POST.get('user_id', None)
-
-        if request_type == 'fetch_users':
-            user_details = get_user_details(study_id)
-            if user_details:
-                users = [{'id': uid, 'name': details.get('name', uid)} for uid, details in user_details.items()]
-                return JsonResponse({'status': 'success', 'users': users})
-            return JsonResponse({'status': 'error', 'message': 'No users found'}, status=404)
-
-        if request_type == 'fetch_cases':
-            case_assignments = get_case_assignments(study_id, user_id)
-            if case_assignments:
-                cases = {
-                    'assigned': case_assignments.get('cases_assigned', []),
-                    'completed': case_assignments.get('cases_completed', []),
-                }
-                return JsonResponse({'status': 'success', 'cases': cases})
-            return JsonResponse({'status': 'error', 'message': 'No cases found'}, status=404)
-
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
-
-
-@csrf_exempt
-@require_http_methods(["GET"])
-@_login_required_if_configured
-def get_case_data(request: HttpRequest) -> JsonResponse:
-    """Unused 2024.2 JSON case-data endpoint."""
-    from .services import get_case_files
-
-    study_id = request.GET.get('study_id')
-    case_id = request.GET.get('case_id')
-
-    if not all([study_id, case_id]):
-        return JsonResponse({'status': 'error', 'message': 'Missing required parameters'}, status=400)
-
-    try:
-        case_data = get_case_files(study_id, case_id)
-        return JsonResponse({'status': 'success', 'case_data': case_data})
-    except FileNotFoundError as exc:
-        logger.info("Case data not found: %s", exc)
-        return JsonResponse({'status': 'error', 'message': 'Case data not found'}, status=404)
-
-
-@csrf_exempt
-@require_http_methods(["GET"])
-@_login_required_if_configured
-def case_viewer_new(request: HttpRequest) -> HttpResponse:
-    """Unused 2024.2 query-param viewer (case_viewer_new.html)."""
-    from .services import load_case_details
-
-    study_id = request.GET.get('study_id')
-    user_id = request.GET.get('user_id')
-    case_id = request.GET.get('case_id')
-
-    if not all([study_id, user_id, case_id]):
-        return JsonResponse({'status': 'error', 'message': 'Missing required parameters'}, status=400)
-
-    try:
-        case_details = load_case_details(study_id, case_id)
-
-        context = {
-            'study_id': study_id,
-            'user_id': user_id,
-            'case_id': case_id,
-            'dict_case_details': case_details,
-            'time_step': 0,
-        }
-        return render(request, 'SEMRinterface/case_viewer_new.html', context)
-    except FileNotFoundError as exc:
-        logger.info("Case viewer missing data: %s", exc)
-        return JsonResponse({'status': 'error', 'message': 'Case data not found'}, status=404)

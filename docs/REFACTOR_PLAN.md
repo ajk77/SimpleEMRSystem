@@ -253,18 +253,19 @@ Phase 1 (sections 0–8 above) restored the research-stable viewer from `a2c35bf
 
 `FUNCTIONALITY.md` checks on a **temp copy** of `demo_study` (never write the committed study). Client tests cover study/user/case pickers, familiar/select viewer HTML, CSRF POST of `selected_ids` → JSONL, mark-complete and reset.
 
-#### 2.0a Lab settings on the home screen (THIS PR)
+#### 2.0a Lab settings on the home screen (merged)
 
 - Default `SEMR_EYE_TRACKING_MODE` off.
 - Study selection screen has a Lab settings panel. Saving writes the session and `semr_runtime.json` (gitignored). `SEMR_EYE_TRACKING_MODE=1` in the environment remains the factory default before any UI save.
 
-#### 2.1 Hygiene
+#### 2.1 Hygiene (THIS PR; done when merged)
 
-- Relative URLs on pickers (today they hardcode `http://127.0.0.1:8000/SEMRinterface/...`).
-- Pin jQuery on pickers.
-- Unmount then delete 2024.2 leftovers: welcome, login, profile, `unified_selection_new`, `case_viewer_new`, `components/`, `static/js/core/`, `modules/`, `tutorial.js`, `custom.css` unused by the research viewer, `auth_views`, health_check leaky `/api/info/`.
+- Relative `{% url %}` links on study/user/case pickers (no more hardcoded `http://127.0.0.1:8000/SEMRinterface/...`).
+- Pin jQuery 3.6.4 on pickers (same pin as the viewer).
+- 2024.2 shell removed: welcome, login, profile, `unified_selection_new`, `case_viewer_new`, `components/`, `static/js/core/`, `modules/`, `tutorial.js`, unused `custom.css`, `auth_views`, leaky `/api/info/` and `/api/quickstart/`.
+- Slim `/health/` and `/api/health/` remain (JSON ok/unhealthy, db ping, resources exists + study count; no study names, DEBUG, SECRET_KEY, disk, memory, or paths).
 - Keep Bootstrap 3 + `emr_3.js` + `bs_3.css` on the viewer.
-- Local `bootstrap.min.js` is unused (viewer uses jsDelivr pin of `a2c35bf`).
+- Viewer still uses jsDelivr `bootstrap.min.js` pin of `a2c35bf` (local stub deleted).
 
 #### 2.2 Dynamic content
 
