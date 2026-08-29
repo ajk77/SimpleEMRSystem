@@ -1,81 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="icon" href="/static/S.ico" type="image/x-icon" />
+{% extends "SEMRinterface/picker_base.html" %}
 
-    <style type="text/css">
-        .info-div {
-            padding-left: 10px;
-            padding-right: 10px;
-            width: 1200px;
-            background-color: #DCDCDC;
-            text-align: left;
-            border-radius: 3px;
-        }
-        .lab-settings {
-            margin: 16px 0;
-            padding: 8px 12px;
-            border: 1px solid #888;
-            border-radius: 3px;
-            background-color: #f5f5f5;
-        }
-        .lab-settings label {
-            display: block;
-            margin: 8px 0;
-        }
-        </style>
+{% block title %}Study selection{% endblock %}
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js" type="text/javascript"></script>
-    <script>
-    $(document).ready(function(){
-        is_full_screen();
-    });
-
-    function is_full_screen(){
-    // +1 is because firefox add an bar of pixel height 1 to the top of full screen that pops down the menu bar
-    // the pop down functionality is disabled when F11 is pressed three times.
-    if(screen.width === window.innerWidth && screen.height === window.innerHeight){
-        $('#fs').hide();
-    }else{
-        $('#fs').show();
-    }}
-    </script>
-
-</head>
-<body bgcolor="#E6E6FA">
-<h1>Welcome to the Simple EMR System - Study Selection Screen</h1>
-<div id="fs"><h2>Please reload in full screen (F11 then F5)</h2></div>
-<div class="info-div">
-    <p> 
-		The Simple EMR System is a rapidly deployable and readily customizable electronic medical record (EMR) user interface for supporting laboratory-based research studies of EMR design and usability.
-    </p>
-	<p> 
-		For more information, please see <a href="https://github.com/ajk77/SimpleEMRSystem">Simple EMR System on github</a>.
-	</p>
-    </br></br>
-    <form method="post" action="" class="lab-settings">
-        {% csrf_token %}
-        <fieldset>
-            <legend>Lab settings</legend>
-            <label>
-                <input type="checkbox" name="eye_tracking_mode" id="eye_tracking_mode" value="1"{% if eye_tracking_mode %} checked{% endif %}>
-                Eye-tracking mode (locks the case viewer to 1920&times;1080)
-            </label>
-            <button type="submit" name="save_settings" value="1">Save settings</button>
-        </fieldset>
-    </form>
-	<p> 
-		Please select a study from the table below:
-	</p>
-	<table width="50%" border="1"><tr><th>Study</th></tr>
+{% block content %}
+<h1>Study selection</h1>
+<form method="post" action="" class="lab-settings">
+    {% csrf_token %}
+    <fieldset>
+        <legend>Lab settings</legend>
+        <label>
+            <input type="checkbox" name="eye_tracking_mode" id="eye_tracking_mode" value="1"{% if eye_tracking_mode %} checked{% endif %}>
+            Eye-tracking mode (locks the case viewer to 1920&times;1080)
+        </label>
+        <button type="submit" class="btn" name="save_settings" value="1">Save settings</button>
+    </fieldset>
+</form>
+<p>Select a study:</p>
+<ul class="study-list">
     {% for study_id in list_study_id %}
-            <tr><th><a href="{% url 'select_user' study_id %}"><button>{{ study_id }}</button></a> </th></tr>
+    <li><a class="study-card" href="{% url 'select_user' study_id %}">{{ study_id }}</a></li>
     {% endfor %}
-    </table>
-
-</div>
-
-</body>
-</html>
+</ul>
+{% endblock %}

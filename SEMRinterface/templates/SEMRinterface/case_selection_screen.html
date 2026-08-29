@@ -1,121 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-   	<link rel="icon" href="/static/S.ico" type="image/x-icon" />
+{% extends "SEMRinterface/picker_base.html" %}
 
-    <style type="text/css">
-        .info-div {
-            padding-left: 10px;
-            padding-right: 10px;
-            width: 1200px;
-            background-color: #DCDCDC;
-            text-align: left;
-            border-radius: 3px;
-        }
-        </style>
+{% block title %}Case selection{% endblock %}
 
-	<script src="https://code.jquery.com/jquery-3.6.4.min.js" type="text/javascript"></script>
-	<script>	
-	   /* function caseReset(caseId, url) {
-			console.log(url);
-			$.get(url, function(){$(this).attr('disabled', true);$('#select'+caseId).attr('disabled', false);});
-			console.log('bbbbbb');
-		}*/
-		
-		function caseReset(caseId, url) {
-		  var xhttp = new XMLHttpRequest();
-		  xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-			  $('#select'+caseId).prop('disabled', false);
-			  $('#reset'+caseId).hide();
-			  $('#complete'+caseId).show();
-			}
-		  };
-		  xhttp.open("GET", url, false);
-		  xhttp.send();
-		}
-		
-		function markComplete(caseId, url) {
-		  var xhttp = new XMLHttpRequest();
-		  xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-			  $('#select'+caseId).prop('disabled', true);
-			  $('#reset'+caseId).show();
-			  $('#complete'+caseId).hide();
-			}
-		  };
-		  xhttp.open("GET", url, false);
-		  xhttp.send();
-		}
-	</script>
-    <script>
-    $(document).ready(function(){
-        is_full_screen();
-    });
+{% block extra_head %}
+<script>
+function caseReset(caseId, url) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById('select' + caseId).disabled = false;
+      document.getElementById('reset' + caseId).style.display = 'none';
+      document.getElementById('complete' + caseId).style.display = '';
+      var status = document.getElementById('status' + caseId);
+      if (status) {
+        status.textContent = 'No';
+        status.className = 'badge badge-no';
+      }
+      var row = document.getElementById('caserow' + caseId);
+      if (row) {
+        row.classList.remove('is-complete');
+      }
+    }
+  };
+  xhttp.open("GET", url, false);
+  xhttp.send();
+}
 
-    function is_full_screen(){
-    // +1 is because firefox add an bar of pixel height 1 to the top of full screen that pops down the menu bar
-    // the pop down functionality is disabled when F11 is pressed three times.
-    if(screen.width === window.innerWidth && screen.height === window.innerHeight){
-        $('#fs').hide();
-    }else{
-        $('#fs').show();
-    }}
-    </script>
+function markComplete(caseId, url) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById('select' + caseId).disabled = true;
+      document.getElementById('reset' + caseId).style.display = '';
+      document.getElementById('complete' + caseId).style.display = 'none';
+      var status = document.getElementById('status' + caseId);
+      if (status) {
+        status.textContent = 'Yes';
+        status.className = 'badge badge-yes';
+      }
+      var row = document.getElementById('caserow' + caseId);
+      if (row) {
+        row.classList.add('is-complete');
+      }
+    }
+  };
+  xhttp.open("GET", url, false);
+  xhttp.send();
+}
+</script>
+{% endblock %}
 
-</head>
-<body bgcolor="#E6E6FA">
-<h1>Welcome to the Simple EMR System - Case Selection Screen</h1>
-<div id="fs"><h2>Please reload in full screen (F11 then F5)</h2></div>
-<div class="info-div">
-    <p> 
-		The Simple EMR System is a rapidly deployable and readily customizable electronic medical record (EMR) user interface for supporting laboratory-based research studies of EMR design and usability.
-    </p>
-	<p> 
-		For more information, please see <a href="https://github.com/ajk77/SimpleEMRSystem">Simple EMR System on github</a>.
-	</p>
-    </br></br>
-	<p> 
-		Study: {{ study_id }}
-	</p>
-	<p> 
-		User: {{ user_id }}
-	</p>
-	<p> 
-		Please select a case from the table below:
-	</p>
-	<table width="50%" border="1"><tr><th>Case Id</th><th>Case Completed</th><th>Actions</tr>
-    {% for case_id in list_cases_assigned %}
+{% block content %}
+<h1>Case selection</h1>
+<p>Select a case:</p>
+<div class="table-wrap">
+    <table class="picker-table">
+        <thead>
+            <tr>
+                <th scope="col">Case Id</th>
+                <th scope="col">Case Completed</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for case_id in list_cases_assigned %}
             {% if case_id in list_cases_completed %}
-				<tr><th><a href="{% url 'case_viewer' study_id user_id case_id %}">
-					<button id="select{{ case_id }}" disabled>{{ case_id }}</button></a> </th>
-				<th>Yes</th>
-				<th> 				
-					<button id="reset{{ case_id }}" onclick="caseReset('{{ case_id }}', '{% url 'case_reset' %}?study_id={{ study_id }}&user_id={{ user_id }}&case_id={{ case_id }}')">Reset</button> 
-					
-					<button id="complete{{ case_id }}" onclick="markComplete('{{ case_id }}', '{% url 'mark_complete' %}?study_id={{ study_id }}&user_id={{ user_id }}&case_id={{ case_id }}')" style="display:none;">Mark Complete</button> 
-				</th>	
-			{% else %}
-				<tr><th><a href="{% url 'case_viewer' study_id user_id case_id %}">
-					<button id="select{{ case_id }}">{{ case_id }}</button></a> </th>
-				<th>No</th>
-				<th> 
-					<button id="complete{{ case_id }}" onclick="markComplete('{{ case_id }}', '{% url 'mark_complete' %}?study_id={{ study_id }}&user_id={{ user_id }}&case_id={{ case_id }}')">Mark Complete</button> 
-					
-					<button id="reset{{ case_id }}" onclick="caseReset('{{ case_id }}', '{% url 'case_reset' %}?study_id={{ study_id }}&user_id={{ user_id }}&case_id={{ case_id }}')" style="display:none;">Reset</button> 				
-					
-				</th>	
-			{% endif %}
-			</tr>
-    {% endfor %}
+            <tr id="caserow{{ case_id }}" class="is-complete">
+                <th scope="row"><a href="{% url 'case_viewer' study_id user_id case_id %}">
+                    <button type="button" class="btn" id="select{{ case_id }}" disabled>{{ case_id }}</button></a></th>
+                <td><span id="status{{ case_id }}" class="badge badge-yes">Yes</span></td>
+                <td>
+                    <div class="case-actions">
+                        <button type="button" class="btn btn-ghost" id="reset{{ case_id }}" onclick="caseReset('{{ case_id }}', '{% url 'case_reset' %}?study_id={{ study_id }}&amp;user_id={{ user_id }}&amp;case_id={{ case_id }}')">Reset</button>
+                        <button type="button" class="btn btn-ghost" id="complete{{ case_id }}" onclick="markComplete('{{ case_id }}', '{% url 'mark_complete' %}?study_id={{ study_id }}&amp;user_id={{ user_id }}&amp;case_id={{ case_id }}')" style="display:none;">Mark Complete</button>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr id="caserow{{ case_id }}">
+                <th scope="row"><a href="{% url 'case_viewer' study_id user_id case_id %}">
+                    <button type="button" class="btn" id="select{{ case_id }}">{{ case_id }}</button></a></th>
+                <td><span id="status{{ case_id }}" class="badge badge-no">No</span></td>
+                <td>
+                    <div class="case-actions">
+                        <button type="button" class="btn btn-ghost" id="complete{{ case_id }}" onclick="markComplete('{{ case_id }}', '{% url 'mark_complete' %}?study_id={{ study_id }}&amp;user_id={{ user_id }}&amp;case_id={{ case_id }}')">Mark Complete</button>
+                        <button type="button" class="btn btn-ghost" id="reset{{ case_id }}" onclick="caseReset('{{ case_id }}', '{% url 'case_reset' %}?study_id={{ study_id }}&amp;user_id={{ user_id }}&amp;case_id={{ case_id }}')" style="display:none;">Reset</button>
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
     </table>
-	<p> 
-		<a href="{% url 'select_user' study_id %}"><button>Return to User Selection</button></a>
-	</p>
-
 </div>
-
-</body>
-</html>
+<p class="picker-back">
+    <a class="btn btn-ghost" href="{% url 'select_user' study_id %}">Return to User Selection</a>
+</p>
+{% endblock %}
