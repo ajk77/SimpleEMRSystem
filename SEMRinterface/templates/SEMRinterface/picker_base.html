@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Simple EMR System{% endblock %}</title>
+    <link rel="icon" href="/static/S.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/css/picker.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<div class="picker-shell">
+    <header class="picker-header">
+        <p class="picker-brand">Simple EMR System</p>
+        <p class="picker-lede">Facilitator screens for laboratory EMR usability studies. The case viewer remains the timed lab instrument.</p>
+        <p class="picker-links"><a href="https://github.com/ajk77/SimpleEMRSystem">Simple EMR System on GitHub</a></p>
+        {% if study_id %}
+        <nav class="picker-crumb" aria-label="Breadcrumb">
+            <a href="{% url 'select_study' %}">Study</a>
+            <span class="picker-crumb-sep">/</span>
+            {% if user_id %}
+            <a href="{% url 'select_user' study_id %}">{{ study_id }}</a>
+            <span class="picker-crumb-sep">/</span>
+            <span>User</span>
+            <span class="picker-crumb-sep">/</span>
+            <a href="{% url 'select_case' study_id user_id %}">{{ user_id }}</a>
+            <span class="picker-crumb-sep">/</span>
+            <span>Cases</span>
+            {% else %}
+            <span>{{ study_id }}</span>
+            <span class="picker-crumb-sep">/</span>
+            <span>User</span>
+            {% endif %}
+        </nav>
+        {% endif %}
+    </header>
+    <main class="picker-main">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+</body>
+</html>

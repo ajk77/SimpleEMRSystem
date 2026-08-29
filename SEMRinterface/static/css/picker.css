@@ -1,0 +1,267 @@
+/* Facilitator picker screens (study / user / case). Not used by the case viewer. */
+
+:root {
+  --bg: #eef0f3;
+  --surface: #ffffff;
+  --text: #1c2128;
+  --muted: #5b6570;
+  --line: #d5dbe3;
+  --accent: #243f5c;
+  --accent-hover: #1a3148;
+  --ok: #1e6b43;
+  --ok-bg: #e6f4ec;
+  --open: #5c5340;
+  --open-bg: #f3efe4;
+  --radius: 8px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.picker-shell {
+  width: 100%;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+}
+
+.picker-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.picker-brand {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.picker-lede {
+  margin: 0.4rem 0 0.55rem;
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+
+.picker-links {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.picker-links a {
+  color: var(--accent);
+}
+
+.picker-crumb {
+  margin-top: 0.85rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.picker-crumb a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.picker-crumb a:hover {
+  text-decoration: underline;
+}
+
+.picker-crumb-sep {
+  margin: 0 0.35rem;
+  color: #9aa3ad;
+}
+
+.picker-main h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.picker-main p {
+  margin: 0 0 0.85rem;
+}
+
+.lab-settings {
+  margin: 0 0 1.5rem;
+}
+
+.lab-settings fieldset {
+  margin: 0;
+  padding: 1rem 1.1rem 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.lab-settings legend {
+  padding: 0 0.35rem;
+  font-weight: 650;
+}
+
+.lab-settings label {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+  margin: 0.45rem 0 0.9rem;
+}
+
+.study-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.study-card {
+  display: block;
+  padding: 0.9rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--accent);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.study-card:hover,
+.study-card:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+
+.picker-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+.picker-table th,
+.picker-table td {
+  padding: 0.65rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.picker-table thead th {
+  font-size: 0.82rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: #f7f8fa;
+}
+
+.picker-table tbody th {
+  font-weight: 650;
+  background: transparent;
+  text-transform: none;
+  letter-spacing: normal;
+  color: inherit;
+}
+
+.picker-table tbody tr:last-child th,
+.picker-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.picker-table tbody tr.is-complete {
+  background: #f4f7f5;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.38rem 0.75rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:hover,
+.btn:focus {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  color: var(--accent);
+  background: transparent;
+  border-color: var(--line);
+}
+
+.btn-ghost:hover,
+.btn-ghost:focus {
+  background: #e8edf2;
+  color: var(--accent);
+}
+
+.case-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.badge-yes {
+  color: var(--ok);
+  background: var(--ok-bg);
+}
+
+.badge-no {
+  color: var(--open);
+  background: var(--open-bg);
+}
+
+.picker-back {
+  margin-top: 1rem;
+}
