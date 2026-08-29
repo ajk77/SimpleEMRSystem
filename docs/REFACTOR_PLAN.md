@@ -267,17 +267,19 @@ Phase 1 (sections 0–8 above) restored the research-stable viewer from `a2c35bf
 - Keep Bootstrap 3 + `emr_3.js` + `bs_3.css` on the viewer.
 - Viewer still uses jsDelivr `bootstrap.min.js` pin of `a2c35bf` (local stub deleted).
 
-#### 2.2 Dynamic content (THIS PR)
+#### 2.2 Dynamic content (merged, PR 17; init hotfix PR 18)
 
 Replace `{% autoescape off %}` JSON dumps in `case_viewer.html` with Django `json_script` + `JSON.parse` in `emr_3.js`. Preserve row ids (`rowBUN`, `rowmedidx*`). CSRF on `selected_items` (already not exempt on research `save_selected_items`). No layout/visual change; time-slider JS is not touched.
 
 PR 15's time-slider patch was reverted (PR 16). The second-drag issue is deferred; do not reintroduce `ordinal:false`, `liveRedraw:false`, `setExtremes` redraw flags, or dropping `reflow`.
 
-#### 2.3 Modern picker screens (next)
+#### 2.3 Modern picker screens (THIS PR)
 
-Shared layout, readable type, cards/table, responsive, no F11 nag required on laptops. Keep three-step path URLs. Assigned vs completed cases. Do not collapse to the 2024.2 dropdown wizard.
+Shared `picker_base.html` + `static/css/picker.css` (not `bs_3.css`). Readable system type, max-width ~44rem, study cards, user/case tables, no F11 nag, no jQuery on pickers. Lab settings stay on home with the same field names (`eye_tracking_mode`, `save_settings`). Keep three-step path URLs and `id="select{{ case_id }}"`. Assigned vs completed cases visually distinct. Reset / Mark Complete use vanilla DOM (`getElementById` / `style.display`).
 
-#### 2.4 Viewer
+These screens are facilitator UI. The case viewer remains the lab instrument (Highcharts, `selected_ids`, row ids, time slider, `json_script`). Do not collapse pickers to the 2024.2 dropdown wizard (`welcome` / `login` / `unified_selection_new`).
+
+#### 2.4 Viewer (next)
 
 First vendor Highcharts/jQuery/Bootstrap for offline labs (layout unchanged). Then if eye-tracking mode is off (the default), optional fluid layout. Turn it on from Lab settings on the home screen when a study needs the locked 1920×1080 viewer.
 
