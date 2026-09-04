@@ -239,6 +239,8 @@ PR 1 unblocks everything. Do not start Docker or AbstractUser migrations before 
 
 Phase 1 (sections 0–8 above) restored the research-stable viewer from `a2c35bf`. Phase 2 modernizes incrementally **without** replacing the lab instrument. `docs/CURRENT_STATE.md` is stale: it still says `master` is a broken 2024.2 shell. The research viewer is restored. Live behavior is the restored `a2c35bf` flow plus later PRs; this file's Phase 2 section is the remaining work.
 
+**Hosting note:** single-user local `manage.py runserver` is the intended free host for now. Shared/production hosting remains later Phase 2 / Phase 1 production-slice work.
+
 ### Principles
 
 - Incremental PRs; `manage.py runserver` still shows a demo case after each.
@@ -279,11 +281,15 @@ Shared `picker_base.html` + `static/css/picker.css` (not `bs_3.css`). Readable s
 
 These screens are facilitator UI. The case viewer remains the lab instrument (Highcharts, `selected_ids`, row ids, time slider, `json_script`). Do not collapse pickers to the 2024.2 dropdown wizard (`welcome` / `login` / `unified_selection_new`).
 
-#### 2.4 Viewer (THIS PR)
+#### 2.4 Viewer JS fetch-at-install (merged, PR 21)
 
-This PR fetches pinned JS at install (`install.sh` / `install.bat` run `tools/fetch_frontend.py`) and gitignores them (do not vendor in git). The case viewer loads local `/static/js` paths. Layout is unchanged. Highcharts 8.2.2 is still commercial; a license is required for non-eval use.
+Pinned JS is fetched at install (`install.sh` / `install.bat` run `tools/fetch_frontend.py`) and gitignored (not vendored in git). The case viewer loads local `/static/js` paths. Layout was unchanged in that PR. Highcharts 8.2.2 is still commercial; a license is required for non-eval use.
 
-Next is optional fluid layout when `SEMR_EYE_TRACKING_MODE` is off (the default). Turn it on from Lab settings on the home screen when a study needs the locked 1920×1080 viewer.
+#### 2.4b Optional fluid layout when eye-tracking off (THIS PR)
+
+When `SEMR_EYE_TRACKING_MODE` is off (the default), the case viewer uses a small overlay stylesheet (`viewer_fluid.css`) so panels can flex on narrower windows. Body gets `eye-tracking-off` / `eye-tracking-on` from the existing `eye_tracking_mode` context. When Lab settings turns eye-tracking on, keep the locked ~1920px instrument (min-width + overflow-x). Same Highcharts, `selected_ids` / row ids, `json_script`, and time-slider JS. Do **not** fix the time-slider second-drag bug here. Resize reflows `chartsContainers` only in fluid mode.
+
+Next is **2.5**.
 
 #### 2.5 Backend leftovers from original plan
 

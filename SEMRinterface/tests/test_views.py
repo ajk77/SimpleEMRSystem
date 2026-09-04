@@ -199,6 +199,10 @@ class DemoStudyFlowTests(TestCase):
             # the old autoescape dump was add_observation_chart("BUN", {json}).
             self.assertNotIn(f'add_observation_chart("{ob_code}"', html)
             self.assertNotIn("add_observation_chart('", html)
+            # Default Lab setting: fluid viewer (eye tracking off).
+            self.assertIn('class="eye-tracking-off"', html)
+            self.assertNotIn('class="eye-tracking-on"', html)
+            self.assertIn("/static/custom_css/viewer_fluid.css", html)
 
         template_src = (
             Path(settings.BASE_DIR)
@@ -209,6 +213,30 @@ class DemoStudyFlowTests(TestCase):
         ).read_text()
         self.assertNotIn("{% autoescape", template_src)
         self.assertNotIn("endautoescape", template_src)
+
+    def test_familiar_viewer_eye_tracking_on_body_class(self):
+        response = self.client.get("/SEMRinterface/")
+        self.assertEqual(response.status_code, 200)
+        csrftoken = self.client.cookies["csrftoken"].value
+        response = self.client.post(
+            "/SEMRinterface/",
+            data={
+                "csrfmiddlewaretoken": csrftoken,
+                "eye_tracking_mode": "1",
+                "save_settings": "1",
+            },
+        )
+        self.assertRedirects(response, "/SEMRinterface/")
+        self.assertTrue(self.client.session["SEMR_EYE_TRACKING_MODE"])
+
+        response = self.client.get("/SEMRinterface/demo_study/testUser1/10000101/")
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        self.assertIn('class="eye-tracking-on"', html)
+        self.assertNotIn('class="eye-tracking-off"', html)
+        self.assertIn("/static/custom_css/viewer_fluid.css", html)
+        self.assertIn("init_case_viewer", html)
+        self.assertIn("/static/js/jquery-3.6.4.min.js", html)
 
     def test_fetch_frontend_assets_are_gitignored(self):
         fetch_path = Path(settings.BASE_DIR) / "tools" / "fetch_frontend.py"
