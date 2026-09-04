@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/css/bootstrap.css" rel="stylesheet">
     <link href="/static/custom_css/bs_3.css" rel="stylesheet">
+    <link href="/static/custom_css/viewer_fluid.css" rel="stylesheet">
 	<link rel="icon" href="/static/S.ico" type="image/x-icon" />
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -18,7 +19,7 @@
     <script src="/static/js/emr_3.js?v=jsonscript"></script>
     <script src="/static/js/emr_3_highcharts_compat.js?v=jsonscript"></script>
 </head>
-<body>
+<body class="{% if eye_tracking_mode %}eye-tracking-on{% else %}eye-tracking-off{% endif %}">
 {{ dict_case_details|json_script:"case-details" }}
 {{ dict_observations|json_script:"case-observations" }}
 {{ dict_variable_2_details|json_script:"variable-details" }}
@@ -274,6 +275,21 @@ function init_case_viewer() {
 </div>
     <script>
         show_loading();
+        // Reflow Highcharts on resize only when fluid (eye-tracking off).
+        // Does not change chart creation, updateExtremes, or time-slider flags.
+        if (document.body.classList.contains('eye-tracking-off')) {
+            window.addEventListener('resize', function () {
+                if (typeof chartsContainers === 'undefined' || !chartsContainers) {
+                    return;
+                }
+                for (var i = 0; i < chartsContainers.length; i++) {
+                    var chart = chartsContainers[i];
+                    if (chart && typeof chart.reflow === 'function') {
+                        chart.reflow();
+                    }
+                }
+            });
+        }
     </script>
 
 </body>

@@ -1,0 +1,96 @@
+/*
+ * Optional fluid/responsive case-viewer layout when eye-tracking mode is off.
+ * Linked after bs_3.css from case_viewer.html. When Lab settings enables
+ * SEMR_EYE_TRACKING_MODE, body.eye-tracking-on keeps the locked instrument.
+ * Do not restyle pickers here.
+ */
+
+/* ---- Eye-tracking ON: pixel-stable 1920-ish instrument ---- */
+body.eye-tracking-on {
+    min-width: 1920px;
+    overflow-x: auto;
+}
+
+body.eye-tracking-on .container {
+    min-width: 1920px;
+}
+
+/* Keep existing vh panel heights from bs_3.css when locked. */
+
+/* ---- Eye-tracking OFF (default): fluid width ---- */
+body.eye-tracking-off {
+    min-width: 0;
+}
+
+body.eye-tracking-off .container {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Soften fixed lab tile widths so chartrows wrap on narrower screens. */
+body.eye-tracking-off .chartrow {
+    width: 45%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+    body.eye-tracking-off .chartrow {
+        width: 95%;
+    }
+}
+
+/* Vital/med rows stay full-ish of their column (override only if needed). */
+body.eye-tracking-off .vitalrow,
+body.eye-tracking-off .iorow,
+body.eye-tracking-off .medrow {
+    width: 90%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Prefer min-height so short windows do not crush panels as badly as rigid vh. */
+body.eye-tracking-off .labbox,
+body.eye-tracking-off .vitmedbox,
+body.eye-tracking-off .medbox {
+    height: auto;
+    min-height: 60vh;
+    max-height: 88.1vh;
+}
+
+body.eye-tracking-off .half-vitmedbox {
+    height: auto;
+    min-height: 40vh;
+    max-height: 70vh;
+}
+
+body.eye-tracking-off .micro-vitmedbox {
+    height: auto;
+    min-height: 10vh;
+    max-height: 18vh;
+}
+
+body.eye-tracking-off .notebox {
+    height: auto;
+    min-height: 40vh;
+    max-height: 70.3vh;
+}
+
+body.eye-tracking-off .taskbox {
+    height: auto;
+    min-height: 12vh;
+    /* Keep cyan taskbox from bs_3.css */
+}
+
+body.eye-tracking-off .notetaskbox {
+    height: auto;
+    min-height: 60vh;
+    max-height: 95.3vh;
+}
+
+body.eye-tracking-off .report {
+    height: auto;
+    min-height: 30vh;
+    max-height: 63vh;
+}
