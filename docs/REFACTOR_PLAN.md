@@ -279,12 +279,21 @@ Shared `picker_base.html` + `static/css/picker.css` (not `bs_3.css`). Readable s
 
 These screens are facilitator UI. The case viewer remains the lab instrument (Highcharts, `selected_ids`, row ids, time slider, `json_script`). Do not collapse pickers to the 2024.2 dropdown wizard (`welcome` / `login` / `unified_selection_new`).
 
-#### 2.4 Viewer (THIS PR)
+#### 2.4 Viewer (PR 21 merged; PR 22 fluid viewer)
 
-This PR fetches pinned JS at install (`install.sh` / `install.bat` run `tools/fetch_frontend.py`) and gitignores them (do not vendor in git). The case viewer loads local `/static/js` paths. Layout is unchanged. Highcharts 8.2.2 is still commercial; a license is required for non-eval use.
+PR 21 (merged): fetch pinned JS at install (`install.sh` / `install.bat` run `tools/fetch_frontend.py`) and gitignore them (do not vendor in git). The case viewer loads local `/static/js` paths. Highcharts 8.2.2 is still commercial; a license is required for non-eval use.
 
-Next is optional fluid layout when `SEMR_EYE_TRACKING_MODE` is off (the default). Turn it on from Lab settings on the home screen when a study needs the locked 1920×1080 viewer.
+PR 22 (open or merged): optional fluid/responsive case viewer when `SEMR_EYE_TRACKING_MODE` is off (the default). When Lab settings enables eye-tracking, keep the pixel-stable ~1920×1080 instrument. No Vercel; single-user local `manage.py runserver` is the intended free host for now.
 
-#### 2.5 Backend leftovers from original plan
+#### 2.5a Env secrets safety rails (THIS PR)
 
-Env secrets, `load_resources` walking `resources/`, `CaseAssignment` so two tabs cannot clobber `cases_completed`, restore `tools/loaddata_synthea.py`.
+- Read `SECRET_KEY` from `DJANGO_SECRET_KEY` / `SECRET_KEY`; loud insecure default only when `DEBUG` is True.
+- `DEBUG` from `DJANGO_DEBUG` (default True for local lab runserver).
+- Refuse `DEBUG=False` with missing or placeholder secret (`ImproperlyConfigured`).
+- Optional `DJANGO_ALLOWED_HOSTS`; `.env.example` + gitignore `.env`.
+- `DEFAULT_AUTO_FIELD`; drop `USE_L10N`; quarantine `setup_wizard.py` (do not use — it edits `settings.py`).
+- No settings package split yet; no django-environ; no viewer/UI changes; no Vercel.
+
+#### 2.5 Remaining backend leftovers
+
+Still ahead (not this PR): `load_resources` walking `resources/`, `CaseAssignment` so two tabs cannot clobber `cases_completed`, restore `tools/loaddata_synthea.py`. Hosting remains local single-user `runserver` (no Vercel).
