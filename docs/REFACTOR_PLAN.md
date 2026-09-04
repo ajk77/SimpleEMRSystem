@@ -285,12 +285,21 @@ These screens are facilitator UI. The case viewer remains the lab instrument (Hi
 
 Pinned JS is fetched at install (`install.sh` / `install.bat` run `tools/fetch_frontend.py`) and gitignored (not vendored in git). The case viewer loads local `/static/js` paths. Layout was unchanged in that PR. Highcharts 8.2.2 is still commercial; a license is required for non-eval use.
 
-#### 2.4b Optional fluid layout when eye-tracking off (THIS PR)
+#### 2.4b Optional fluid layout when eye-tracking off (PR 22)
 
 When `SEMR_EYE_TRACKING_MODE` is off (the default), the case viewer uses a small overlay stylesheet (`viewer_fluid.css`) so panels can flex on narrower windows. Body gets `eye-tracking-off` / `eye-tracking-on` from the existing `eye_tracking_mode` context. When Lab settings turns eye-tracking on, keep the locked ~1920px instrument (min-width + overflow-x). Same Highcharts, `selected_ids` / row ids, `json_script`, and time-slider JS. Do **not** fix the time-slider second-drag bug here. Resize reflows `chartsContainers` only in fluid mode.
 
 Next is **2.5**.
 
-#### 2.5 Backend leftovers from original plan
+#### 2.5a Env secrets safety rails (THIS PR)
 
-Env secrets, `load_resources` walking `resources/`, `CaseAssignment` so two tabs cannot clobber `cases_completed`, restore `tools/loaddata_synthea.py`.
+- Read `SECRET_KEY` from `DJANGO_SECRET_KEY` / `SECRET_KEY`; loud insecure default only when `DEBUG` is True.
+- `DEBUG` from `DJANGO_DEBUG` (default True for local lab runserver).
+- Refuse `DEBUG=False` with missing or placeholder secret (`ImproperlyConfigured`).
+- Optional `DJANGO_ALLOWED_HOSTS`; `.env.example` + gitignore `.env`.
+- `DEFAULT_AUTO_FIELD`; drop `USE_L10N`; quarantine `setup_wizard.py` (do not use — it edits `settings.py`).
+- No settings package split yet; no django-environ; no viewer/UI changes; no Vercel.
+
+#### 2.5 Remaining backend leftovers
+
+Still ahead (not this PR): `load_resources` walking `resources/`, `CaseAssignment` so two tabs cannot clobber `cases_completed`, restore `tools/loaddata_synthea.py`. Hosting remains local single-user `runserver` (no Vercel).

@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 """
-Simple EMR System Setup Wizard
-Interactive setup for first-time users
+DEPRECATED / QUARANTINED — do not use.
+
+Simple EMR System Setup Wizard (legacy). This script edits SEMRproject/settings.py
+in place (e.g. rewriting SECRET_KEY). Prefer environment variables and
+.env.example instead. Kept only so old docs/links do not 404; do not run
+for new installs.
+
+Interactive setup for first-time users (historical).
 """
 
 import os

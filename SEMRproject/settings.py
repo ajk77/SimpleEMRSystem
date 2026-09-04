@@ -6,7 +6,7 @@ Modified by AndrewJKing.com|@andrewsjourney
 
 Settings file for SEMR deployment. To use:
 update DATABASES{} to reflect your database
-set your SECRET_KEY
+set DJANGO_SECRET_KEY (or SECRET_KEY) in the environment for non-DEBUG runs
 
 ---LICENSE---
 This file is part of SimpleEMRSystem
@@ -30,6 +30,8 @@ along with SimpleEMRSystem.  If not, see <https://www.gnu.org/licenses/>.
 import os
 import json
 
+from django.core.exceptions import ImproperlyConfigured
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,7 +39,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # ^ if using, you must undate the DATABASES content below. 
 # config = json.loads(json.load(open("SEMRproject/config.json", 'r')))
 
-DEBUG = True
+# Default True for local single-user runserver lab use.
+DEBUG = os.environ.get('DJANGO_DEBUG', '1').lower() in ('1', 'true', 'yes')
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -66,7 +69,11 @@ DATABASES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.4/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
+_allowed_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS')
+if _allowed_hosts:
+    ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -80,13 +87,14 @@ LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
 
+# Match existing models/migrations (explicit AutoField PKs).
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
 
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale.
-USE_L10N = True
+# USE_L10N removed (dropped in Django 5); locale formatting follows USE_I18N / FORMAT_MODULE_PATH.
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
@@ -125,8 +133,22 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '$$$$$ENTER SECRET KEY$$$$$'
+# Secret key: prefer env; loud insecure default only when DEBUG is True.
+_PLACEHOLDER_SECRET = '$$$$$ENTER SECRET KEY$$$$$'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        # Loud insecure default for local single-user runserver only.
+        SECRET_KEY = 'django-insecure-local-lab-only-set-DJANGO_SECRET_KEY-for-shared-hosts'
+    else:
+        raise ImproperlyConfigured(
+            'DJANGO_SECRET_KEY (or SECRET_KEY) must be set when DJANGO_DEBUG is False.'
+        )
+elif not DEBUG and SECRET_KEY == _PLACEHOLDER_SECRET:
+    raise ImproperlyConfigured(
+        'Refusing to start with DEBUG=False and the placeholder SECRET_KEY '
+        '$$$$$ENTER SECRET KEY$$$$$. Set DJANGO_SECRET_KEY to a long random string.'
+    )
 
 
 MIDDLEWARE = (
